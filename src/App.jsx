@@ -1,12 +1,16 @@
-import { useState } from 'react'
-import './App.css'
 
+import './App.css'
+import Sidebar from './components/allChatsSideBar/SideBar'
+import ChatBox from './components/ChatBox/ChatBox'
 function App() {
-  const [count, setCount] = useState(0)
+
 
   return (
     <>
-      
+      <div className='w-screen h-screen flex'>
+      <Sidebar/>
+      <ChatBox/>
+      </div>
     </>
   )
 }
