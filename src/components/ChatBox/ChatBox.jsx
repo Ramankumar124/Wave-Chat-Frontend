@@ -1,4 +1,60 @@
+import { useEffect ,useState} from "react";
+import { io } from "socket.io-client";
+import api from '../../api'
 const ChatBox = () => {
+
+  const [userData, setuserData] = useState("");
+  const [message, setmessage] = useState("");
+
+
+  const socket = io("http://localhost:5000"); // Connect to Socket.IO server
+  
+  useEffect(() => {
+  
+    socket.on("connect", () => {
+      console.log("Connected with ID:", socket.id); 
+    });
+  
+    socket.on("disconnect", () => {
+      console.log("Disconnected");
+    });
+  
+    return () => socket.disconnect(); // Clean up on unmount
+  }, []);
+
+  useEffect(() => {
+    
+    socket.on("new-message",message=>{
+      const p=document.createElement('p');
+      p.innerText=message;
+     const chatBox= document.getElementById('chatBox');
+     chatBox.appendChild(p);
+  
+    })
+    return () => {
+      socket.off("new-message"); // Cleanup the event listener
+    };
+    
+  }, [socket])
+  
+  
+
+  useEffect(()=>{
+  api.get('/users')
+  .then(response=>{
+    setuserData(response.data);
+    console.log(response);
+    console.log(userData);
+    
+  })
+  },[])
+
+  function sendMessage(){
+
+    console.log(message);
+    socket.emit("message",message)
+    
+  }
   return (
     <div className="flex flex-col w-2/3 h-screen bg-gray-900 text-white">
       
@@ -26,7 +82,8 @@ const ChatBox = () => {
       </div>
 
       {/* Chat Body (empty for now) */}
-      <div className="flex-grow p-4 bg-gray-900 overflow-y-auto">
+      <div id="chatBox" className="flex-grow p-4 bg-gray-900 overflow-y-auto"> 
+        <p>{userData.name}</p>
         {/* Add chat messages here */}
       </div>
       
@@ -45,12 +102,14 @@ const ChatBox = () => {
         {/* Input Field */}
         <input
           type="text"
+          value={message}
+          onChange={e=>setmessage(e.target.value)}
           placeholder="Type a message"
           className="flex-grow bg-gray-700 text-white rounded-lg px-4 py-2 mx-4 focus:outline-none"
         />
         
         {/* Send Button */}
-        <button className="bg-green-500 p-3 rounded-full hover:bg-green-600">
+        <button onClick={sendMessage} className="bg-green-500 p-3 rounded-full hover:bg-green-600">
           <i className="fas fa-paper-plane"></i> {/* Send Icon */}
         </button>
       </div>
