@@ -1,16 +1,27 @@
 
 import './App.css'
-import Sidebar from './components/allChatsSideBar/SideBar'
-import ChatBox from './components/ChatBox/ChatBox'
+import Login from './components/loginpage'
+import LoginPage from './components/loginpage'
+import {BrowserRouter as Router ,Routes,Route} from 'react-router-dom'
+import Register from './components/RegisPage'
+import Home from './components/home'
 function App() {
 
 
   return (
     <>
-      <div className='w-screen h-screen flex'>
-      <Sidebar/>
-      <ChatBox/>
+    <Router>
+      <div className='App'>
+        <Routes>
+        <Route path='/' element={<Login/>}/>
+          <Route path='/login' element={<Login/>}/>
+          <Route path='/register' element={<Register/>}/>
+          <Route path='/home' element={<Home/>} />
+        </Routes>
       </div>
+    </Router>
+       
+   
     </>
   )
 }

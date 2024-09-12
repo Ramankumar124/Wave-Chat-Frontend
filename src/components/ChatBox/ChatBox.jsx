@@ -1,6 +1,7 @@
 import { useEffect ,useState} from "react";
 import { io } from "socket.io-client";
 import api from '../../api'
+
 const ChatBox = () => {
 
   const [userData, setuserData] = useState("");
@@ -8,7 +9,7 @@ const ChatBox = () => {
 
 
   const socket = io("http://localhost:5000"); // Connect to Socket.IO server
-  
+  const chatId=1234;
   useEffect(() => {
   
     socket.on("connect", () => {
@@ -18,10 +19,22 @@ const ChatBox = () => {
     socket.on("disconnect", () => {
       console.log("Disconnected");
     });
-  
+  socket.emit('joinroom',chatId)
     return () => socket.disconnect(); // Clean up on unmount
   }, []);
 
+  // const sendMessage=()=>{
+  //   socket.emit('sendmessage',{
+  //     chatId,
+  //     senderId
+  //       })
+  // }
+  function sendMessage(){
+
+    console.log(message);
+    socket.emit("message",message)
+    
+  }
   useEffect(() => {
     
     socket.on("new-message",message=>{
@@ -49,12 +62,7 @@ const ChatBox = () => {
   })
   },[])
 
-  function sendMessage(){
 
-    console.log(message);
-    socket.emit("message",message)
-    
-  }
   return (
     <div className="flex flex-col w-2/3 h-screen bg-gray-900 text-white">
       
