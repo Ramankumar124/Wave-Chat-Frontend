@@ -48,7 +48,7 @@ const navigate=useNavigate()
             <input
               type="email"
               onChange={(e)=>setemail(e.target.value)}
-              className="w-full px-4 py-2 mt-2 border rounded-lg focus:ring focus:ring-opacity-50 focus:ring-blue-400"
+              className=" w-full px-4 py-2 mt-2 border rounded-lg focus:ring focus:ring-opacity-50 focus:ring-blue-400"
               placeholder="Enter your email"
             />
           </div>

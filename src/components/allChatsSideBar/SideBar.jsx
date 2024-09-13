@@ -50,6 +50,7 @@ const main = () => {
               <p className="text-gray-400">Last message...</p>
             </div>
           </div>
+          
 
           {/* Repeat Chat Item as needed */}
           {/* ... */}
