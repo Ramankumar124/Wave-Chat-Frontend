@@ -2,7 +2,7 @@ import { useEffect ,useState} from "react";
 import { io } from "socket.io-client";
 import api from '../../api'
 
-const ChatBox = () => {
+const ChatBox = ({openChat}) => {
 
   const [userData, setuserData] = useState("");
   const [message, setmessage] = useState("");
@@ -59,11 +59,14 @@ const ChatBox = () => {
     console.log(response);
     console.log(userData);
     
-  })
+  })  
   },[])
 
-
+if(openChat){
+  return <div className="w-2/3 h-full flex justify-center items-center text-white">Select a chat to start messaging</div>;
+}
   return (
+
     <div className="flex flex-col w-2/3 h-screen bg-gray-900 text-white">
       
       {/* Top NavBar */}

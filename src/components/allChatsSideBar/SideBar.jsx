@@ -1,6 +1,9 @@
+import api from "js-cookie";
 import React from "react";
 
-const main = () => {
+const main = ({setopenChat,openChat})  => {
+
+
   return (
     <div className="w-1/3 h-full bg-gray-900 flex border-gray-500 border-r-2 text-white">
       <div
@@ -38,7 +41,7 @@ const main = () => {
         
         <div className="flex-grow overflow-y-auto">
           {/* Single Chat Item */}
-          <div className="flex items-center p-4 hover:bg-gray-700 cursor-pointer">
+          <div    onClick={() => setopenChat(!openChat)}  className="flex items-center p-4 hover:bg-gray-700 cursor-pointer">
             {/* Circle Avatar */}
             <div className="w-12 h-12 rounded-full bg-gray-600 flex-shrink-0"></div>
             {/* Chat Info */}

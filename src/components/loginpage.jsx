@@ -26,6 +26,7 @@ const navigate=useNavigate()
    let response =await api.post('/login',{Password,email})
    if(response.status===200){
      toast.success("Login Successful"); 
+     
      navigate('/home')
     }
   }

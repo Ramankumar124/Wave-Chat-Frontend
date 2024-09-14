@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '../components/allChatsSideBar/SideBar'
 import ChatBox from '../components/ChatBox/ChatBox'
 import Cookies from 'js-cookie'
 import {useNavigate} from 'react-router-dom'
 const Home = () => {
 
+
+  const [openChat, setopenChat] = useState(false)
   const navigate=useNavigate()
   useEffect(() => {
     
@@ -13,11 +15,11 @@ const Home = () => {
       navigate('/')
       
     }
-    }, [])
+    }, [])  
   return (
     <div className='w-screen h-screen flex'>
-    <Sidebar/>
-    <ChatBox/>
+    <Sidebar setopenChat={setopenChat} openChat={openChat} />
+          <ChatBox openChat={openChat}/>
     </div>
   )
 }
