@@ -6,7 +6,7 @@ import {useNavigate} from 'react-router-dom'
 import Cookies from 'js-cookie'
 import {toast,Toaster} from  'react-hot-toast'
 const Login = () => {
-  const [Password, setPassword] = useState('');
+  const [password, setPassword] = useState('');
   const [email, setemail] = useState('');
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const navigate=useNavigate()
  e.preventDefault();
  try{
 
-   let response =await api.post('/login',{Password,email})
+   let response =await api.post('/login',{password,email})
    if(response.status===200){
      toast.success("Login Successful"); 
      
@@ -55,7 +55,7 @@ const navigate=useNavigate()
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label className="block text-sm font-medium text-gray-700">password</label>
             <input
             onChange={(e)=>setPassword(e.target.value)}
               type="password"

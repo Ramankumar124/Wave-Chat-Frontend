@@ -1,8 +1,21 @@
-import api from "js-cookie";
-import React from "react";
+import api from "../../api";
+import React, { useEffect } from "react";
 
 const main = ({setopenChat,openChat})  => {
+  useEffect(() => {
+    // Define the async function
+    const fetchData = async () => {
+        try {
+            const response = await api.get('/userData');
+            console.log(response);  
+            
+        } catch (err) {
+            console.log(err);
+        } 
+    };
 
+    fetchData();
+  }, []); 
 
   return (
     <div className="w-1/3 h-full bg-gray-900 flex border-gray-500 border-r-2 text-white">
