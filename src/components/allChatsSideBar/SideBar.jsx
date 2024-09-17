@@ -1,22 +1,28 @@
+
 import api from "../../api";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const main = ({setopenChat,openChat})  => {
+
+  const [contacts, setcontacts] = useState([]);
   useEffect(() => {
     // Define the async function
     const fetchData = async () => {
         try {
-            const response = await api.get('/userData');
-            console.log(response);  
+            const response = await api.get('/userContacts');
+            // console.log(response.data);  
+            setcontacts(response.data)
             
-        } catch (err) {
+            
+          } catch (err) {
             console.log(err);
-        } 
-    };
-
-    fetchData();
-  }, []); 
-
+          } 
+        };
+        
+        fetchData();
+      }, []); 
+      
+      console.log(contacts);
   return (
     <div className="w-1/3 h-full bg-gray-900 flex border-gray-500 border-r-2 text-white">
       <div
@@ -53,19 +59,27 @@ const main = ({setopenChat,openChat})  => {
         </div>
         
         <div className="flex-grow overflow-y-auto">
-          {/* Single Chat Item */}
-          <div    onClick={() => setopenChat(!openChat)}  className="flex items-center p-4 hover:bg-gray-700 cursor-pointer">
+          
+          {
+            contacts.map((user)=>(
+            
+       
+            <div    onClick={() => setopenChat(!openChat)}  className="flex items-center p-4 hover:bg-gray-700 cursor-pointer">
             {/* Circle Avatar */}
             <div className="w-12 h-12 rounded-full bg-gray-600 flex-shrink-0"></div>
             {/* Chat Info */}
             <div className="ml-4 flex-grow border-b border-gray-700 pb-4">
               <div className="flex justify-between">
-                <h2 className="font-semibold text-white">User Name</h2>
+                <h2 className="font-semibold text-white">{user.name}</h2>
                 <span className="text-sm text-gray-400">6:45 PM</span>
               </div>
               <p className="text-gray-400">Last message...</p>
             </div>
           </div>
+         
+        )
+          )
+          }      
           
 
           {/* Repeat Chat Item as needed */}
