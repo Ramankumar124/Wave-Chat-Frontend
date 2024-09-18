@@ -2,7 +2,7 @@
 import api from "../../api";
 import React, { useEffect, useState } from "react";
 
-const main = ({setopenChat,openChat})  => {
+const main = ({setopenChat,openChat})  => {             
 
   const [contacts, setcontacts] = useState([]);
   useEffect(() => {

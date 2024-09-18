@@ -5,52 +5,6 @@ import api from '../../api'
 const ChatBox = ({openChat}) => {
 
   const [userData, setuserData] = useState("");
-  const [message, setmessage] = useState("");
-
-
-  const socket = io("http://localhost:5000"); // Connect to Socket.IO server
-  const chatId=1234;
-  useEffect(() => {
-  
-    socket.on("connect", () => {
-      console.log("Connected with ID:", socket.id); 
-    });
-  
-    socket.on("disconnect", () => {
-      console.log("Disconnected");
-    });
-  socket.emit('joinroom',chatId)
-    return () => socket.disconnect(); // Clean up on unmount
-  }, []);
-
-  // const sendMessage=()=>{
-  //   socket.emit('sendmessage',{
-  //     chatId,
-  //     senderId
-  //       })
-  // }
-  function sendMessage(){
-
-    console.log(message);
-    socket.emit("message",message)
-    
-  }
-  useEffect(() => {
-    
-    socket.on("new-message",message=>{
-      const p=document.createElement('p');
-      p.innerText=message;
-     const chatBox= document.getElementById('chatBox');
-     chatBox.appendChild(p);
-  
-    })
-    return () => {
-      socket.off("new-message"); // Cleanup the event listener
-    };
-    
-  }, [socket])
-  
-  
 
   useEffect(()=>{
   api.get('/users')
@@ -113,14 +67,16 @@ if(openChat){
         {/* Input Field */}
         <input
           type="text"
-          value={message}
-          onChange={e=>setmessage(e.target.value)}
+          // value={message}
+          // onChange={e=>setmessage(e.target.value)}
           placeholder="Type a message"
           className="flex-grow bg-gray-700 text-white rounded-lg px-4 py-2 mx-4 focus:outline-none"
         />
         
         {/* Send Button */}
-        <button onClick={sendMessage} className="bg-green-500 p-3 rounded-full hover:bg-green-600">
+        <button 
+        // onClick={sendMessage} 
+        className="bg-green-500 p-3 rounded-full hover:bg-green-600">
           <i className="fas fa-paper-plane"></i> {/* Send Icon */}
         </button>
       </div>

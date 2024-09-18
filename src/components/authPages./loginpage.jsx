@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import api from '../api'
+import api from '../../api'
 import { useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 import Cookies from 'js-cookie'

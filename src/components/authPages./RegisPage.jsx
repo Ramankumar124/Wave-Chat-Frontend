@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import api from "../api";
+import api from "../../api";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";

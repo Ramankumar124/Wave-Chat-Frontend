@@ -1,9 +1,8 @@
 
 import './App.css'
-import Login from './components/loginpage'
-import LoginPage from './components/loginpage'
+import Login from './components/authPages./loginpage'
 import {BrowserRouter as Router ,Routes,Route} from 'react-router-dom'
-import Register from './components/RegisPage'
+import Register from './components/authPages./RegisPage'
 import Home from './components/home'
 function App() {
 
