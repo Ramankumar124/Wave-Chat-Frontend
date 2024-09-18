@@ -6,7 +6,12 @@ import {useNavigate} from 'react-router-dom'
 const Home = () => {
 
 
-  const [openChat, setopenChat] = useState(false)
+  const [openChat, setopenChat] = useState({
+    isOpen:false,
+    ChatuserData:{}
+  })
+
+  
   const navigate=useNavigate()
   useEffect(() => {
     

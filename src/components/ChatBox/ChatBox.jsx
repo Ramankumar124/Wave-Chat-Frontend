@@ -4,20 +4,9 @@ import api from '../../api'
 
 const ChatBox = ({openChat}) => {
 
-  const [userData, setuserData] = useState("");
 
-  useEffect(()=>{
-  api.get('/users')
-  .then(response=>{
-    setuserData(response.data);
-    console.log(response);
-    console.log(userData);
-    
-  })  
-  },[])
-
-if(openChat){
-  return <div className="w-2/3 h-full flex justify-center items-center text-white">Select a chat to start messaging</div>;
+if(openChat.isOpen){
+  return <div className="w-2/3 h-full flex justify-center items-center text-black text-8xl">Select a chat to start messaging</div>;
 }
   return (
 
@@ -48,7 +37,7 @@ if(openChat){
 
       {/* Chat Body (empty for now) */}
       <div id="chatBox" className="flex-grow p-4 bg-gray-900 overflow-y-auto"> 
-        <p>{userData.name}</p>
+        <p></p>
         {/* Add chat messages here */}
       </div>
       

@@ -1,28 +1,28 @@
 
-import api from "../../api";
-import React, { useEffect, useState } from "react";
 
+import React, { useEffect, useState } from "react";
+import  {userData}  from "../../userData";
 const main = ({setopenChat,openChat})  => {             
 
-  const [contacts, setcontacts] = useState([]);
+  const [Contacts, setContacts] = useState([]);
+
   useEffect(() => {
-    // Define the async function
-    const fetchData = async () => {
-        try {
-            const response = await api.get('/userContacts');
-            // console.log(response.data);  
-            setcontacts(response.data)
-            
-            
-          } catch (err) {
-            console.log(err);
-          } 
-        };
-        
-        fetchData();
-      }, []); 
-      
-      console.log(contacts);
+  
+    const fetchUserData = async () => {
+      try {
+        const data = await userData();  
+        setContacts(data.contacts);   
+      } catch (error) {
+        console.log('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();  
+
+  }, []); 
+
+  
+   
   return (
     <div className="w-1/3 h-full bg-gray-900 flex border-gray-500 border-r-2 text-white">
       <div
@@ -61,10 +61,10 @@ const main = ({setopenChat,openChat})  => {
         <div className="flex-grow overflow-y-auto">
           
           {
-            contacts.map((user)=>(
+            Contacts.map((user)=>(
             
        
-            <div    onClick={() => setopenChat(!openChat)}  className="flex items-center p-4 hover:bg-gray-700 cursor-pointer">
+            <div key={user._id}   onClick={() => setopenChat(prev=>({...prev,isOpen:!prev.isOpen}))}  className="flex items-center p-4 hover:bg-gray-700 cursor-pointer">
             {/* Circle Avatar */}
             <div className="w-12 h-12 rounded-full bg-gray-600 flex-shrink-0"></div>
             {/* Chat Info */}
