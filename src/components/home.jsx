@@ -7,11 +7,10 @@ const Home = () => {
 
 
   const [openChat, setopenChat] = useState({
-    isOpen:false,
+    isOpen:true,
     ChatuserData:{}
   })
 
-  
   const navigate=useNavigate()
   useEffect(() => {
     

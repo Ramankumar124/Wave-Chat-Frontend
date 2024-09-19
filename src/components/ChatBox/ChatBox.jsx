@@ -1,13 +1,43 @@
 import { useEffect ,useState} from "react";
 import { io } from "socket.io-client";
-import api from '../../api'
+import { userData } from "../../userData";
 
 const ChatBox = ({openChat}) => {
 
+  const ChatuserData=openChat.ChatuserData;
+  
+  if(openChat.isOpen){
+const  socket=io();
+useEffect(() => {
 
-if(openChat.isOpen){
+  const fetchUserData = async () => {
+    try {
+      const data = await userData();
+       console.log(data);
+        let   userId=data._id;
+       let secUserId=openChat.ChatuserData._id
+       const roomid=userId+secUserId
+       console.log(roomid);
+       socket.emit('room',roomid);
+    } catch (error) {
+      console.log("Error fetching user data:", error);
+    }
+   
+  };
+
+  
+  fetchUserData();
+
+ 
+}, [])
+
+
+
   return <div className="w-2/3 h-full flex justify-center items-center text-black text-8xl">Select a chat to start messaging</div>;
 }
+
+
+
   return (
 
     <div className="flex flex-col w-2/3 h-screen bg-gray-900 text-white">
@@ -19,7 +49,7 @@ if(openChat.isOpen){
             <i className="fas fa-arrow-left"></i>
           </button>
           <div className="flex flex-col">
-            <h2 className="text-lg font-bold">Golu</h2>
+            <h2 className="text-lg font-bold">{ChatuserData.name}</h2>
             <span className="text-sm text-gray-400">last seen at 6:46 PM</span>
           </div>
         </div>

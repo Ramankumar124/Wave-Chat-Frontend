@@ -1,28 +1,23 @@
-
-
 import React, { useEffect, useState } from "react";
-import  {userData}  from "../../userData";
-const main = ({setopenChat,openChat})  => {             
-
+import { userData } from "../../userData";
+const main = ({ setopenChat, openChat }) => {
   const [Contacts, setContacts] = useState([]);
 
   useEffect(() => {
-  
     const fetchUserData = async () => {
       try {
-        const data = await userData();  
-        setContacts(data.contacts);   
+        const data = await userData();
+        setContacts(data.contacts);
+   
+        
       } catch (error) {
-        console.log('Error fetching user data:', error);
+        console.log("Error fetching user data:", error);
       }
     };
 
-    fetchUserData();  
+    fetchUserData();
+  }, []);
 
-  }, []); 
-
-  
-   
   return (
     <div className="w-1/3 h-full bg-gray-900 flex border-gray-500 border-r-2 text-white">
       <div
@@ -54,43 +49,43 @@ const main = ({setopenChat,openChat})  => {
         <div className="bg-gray-700 mr-10 px-3 h-8 gap-8 w-full rounded-md flex items-center ">
           <i class="fa-solid fa-magnifying-glass"></i>
           <input
-          className="bg-gray-700 rounded-lg h-full "
-           type="text"placeholder="Seach" />
+            className="bg-gray-700 rounded-lg h-full "
+            type="text"
+            placeholder="Seach"
+          />
         </div>
-        
+
         <div className="flex-grow overflow-y-auto">
-          
-          {
-            Contacts.map((user)=>(
-            
-       
-            <div key={user._id}   onClick={() => setopenChat(prev=>({...prev,isOpen:!prev.isOpen}))}  className="flex items-center p-4 hover:bg-gray-700 cursor-pointer">
-            {/* Circle Avatar */}
-            <div className="w-12 h-12 rounded-full bg-gray-600 flex-shrink-0"></div>
-            {/* Chat Info */}
-            <div className="ml-4 flex-grow border-b border-gray-700 pb-4">
-              <div className="flex justify-between">
-                <h2 className="font-semibold text-white">{user.name}</h2>
-                <span className="text-sm text-gray-400">6:45 PM</span>
+          {Contacts.map((user) => (
+            <div
+              key={user._id}
+              onClick={() =>
+                setopenChat((prev) => ({
+                  ...prev,
+                  isOpen: !prev.isOpen,
+                  ChatuserData: {...prev.ChatuserData,...user}
+                }))
+              }
+              className="flex items-center p-4 hover:bg-gray-700 cursor-pointer"
+            >
+              {/* Circle Avatar */}
+              <div className="w-12 h-12 rounded-full bg-gray-600 flex-shrink-0"></div>
+              {/* Chat Info */}
+              <div className="ml-4 flex-grow border-b border-gray-700 pb-4">
+                <div className="flex justify-between">
+                  <h2 className="font-semibold text-white">{user.name}</h2>
+                  <span className="text-sm text-gray-400">6:45 PM</span>
+                </div>
+                <p className="text-gray-400">Last message...</p>
               </div>
-              <p className="text-gray-400">Last message...</p>
             </div>
-          </div>
-         
-        )
-          )
-          }      
-          
+          ))}
 
           {/* Repeat Chat Item as needed */}
           {/* ... */}
         </div>
       </div>
-
-
-        
-      </div>
-   
+    </div>
   );
 };
 
