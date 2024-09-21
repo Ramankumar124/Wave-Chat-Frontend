@@ -6,8 +6,9 @@ const ChatBox = ({openChat}) => {
 
   const ChatuserData=openChat.ChatuserData;
   
+  const socket = io('http://localhost:5000'); // Replace with your backend URL
+
   if(openChat.isOpen){
-const  socket=io();
 useEffect(() => {
 
   const fetchUserData = async () => {
@@ -19,6 +20,7 @@ useEffect(() => {
        const roomid=userId+secUserId
        console.log(roomid);
        socket.emit('room',roomid);
+    
     } catch (error) {
       console.log("Error fetching user data:", error);
     }
