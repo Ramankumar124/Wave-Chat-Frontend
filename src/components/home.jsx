@@ -7,7 +7,7 @@ const Home = () => {
 
 
   const [openChat, setopenChat] = useState({
-    isOpen:true,
+    isOpen:false,
     ChatuserData:{}
   })
 

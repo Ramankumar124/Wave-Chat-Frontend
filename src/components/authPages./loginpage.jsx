@@ -23,7 +23,7 @@ const navigate=useNavigate()
  e.preventDefault();
  try{
 
-   let response =await api.post('/login',{password,email})
+   let response =await api.post('auth/login',{password,email})
    if(response.status===200){
      toast.success("Login Successful"); 
      
@@ -31,6 +31,8 @@ const navigate=useNavigate()
     }
   }
   catch(error){
+    console.log(error);
+    
     toast.error("Wrong Credential");
   }
      

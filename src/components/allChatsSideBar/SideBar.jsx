@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { userData } from "../../userData";
+import { userData } from "@/userData";
+import api from '@/api'
+import Cookies from 'js-cookie'
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+
 const main = ({ setopenChat, openChat }) => {
   const [Contacts, setContacts] = useState([]);
 
@@ -7,6 +20,8 @@ const main = ({ setopenChat, openChat }) => {
     const fetchUserData = async () => {
       try {
         const data = await userData();
+        // console.log(data);
+        
         setContacts(data.contacts);
    
         
@@ -17,6 +32,18 @@ const main = ({ setopenChat, openChat }) => {
 
     fetchUserData();
   }, []);
+
+
+  const handleLogout = async () => {
+    console.log("hello");
+    try {
+        const response = await api.get('/auth/logout'); 
+        location.reload(); 
+        Cookies.remove('token'); 
+    } catch (error) {
+        console.log("Error during logout:", error);
+    }
+}
 
   return (
     <div className="w-1/3 h-full bg-gray-900 flex border-gray-500 border-r-2 text-white">
@@ -43,7 +70,18 @@ const main = ({ setopenChat, openChat }) => {
           <p>Chats</p>
           <div className="flex gap-4">
             <i class="fa-solid fa-comment-medical"></i>
-            <i class="fa-solid fa-ellipsis-vertical"></i>
+          <DropdownMenu>
+  <DropdownMenuTrigger>  <i class="fa-solid fa-ellipsis-vertical w-4"></i></DropdownMenuTrigger>
+  <DropdownMenuContent className="bg-slate-400 ">
+    <DropdownMenuLabel >My Account</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+    <DropdownMenuItem>Billing</DropdownMenuItem>
+    <DropdownMenuItem>Team</DropdownMenuItem>
+    <DropdownMenuItem>Subscription</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+
           </div>
         </div>
         <div className="bg-gray-700 mr-10 px-3 h-8 gap-8 w-full rounded-md flex items-center ">
@@ -62,7 +100,8 @@ const main = ({ setopenChat, openChat }) => {
               onClick={() =>
                 setopenChat((prev) => ({
                   ...prev,
-                  isOpen: !prev.isOpen,
+                  // isOpen: !prev.isOpen,
+                  isOpen: true,
                   ChatuserData: {...prev.ChatuserData,...user}
                 }))
               }

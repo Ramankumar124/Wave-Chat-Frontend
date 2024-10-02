@@ -26,7 +26,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("/register", FormdData);
+      const response = await api.post("/auth/register", FormdData);
       if (response.status === 201) {
         navigate("/home");
       }
