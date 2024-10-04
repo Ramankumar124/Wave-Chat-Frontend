@@ -4,6 +4,7 @@ import { userData } from "../../userData";
 import api from "../../api";
 import { Button } from "../ui/button";
 import EmojiPicker from "emoji-picker-react";
+import TypingIndicator from "./TypingIndicator";
 
 
 const socket = io("http://localhost:5000");
@@ -13,19 +14,23 @@ const ChatBox = ({ openChat }) => {
   const [chat, setChat] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
-
+  const [ShowTyping, setShowTyping] = useState(false);
+  const typingTimeoutRef = useRef(null); // For tracking typing timeout
   const chatEndRef = useRef(null);
   const ChatuserData = openChat.ChatuserData;
-
+const [data, setdata] = useState()
   let contactUserId = openChat.ChatuserData?._id;
+
+  let roomId;
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (contactUserId) {
-        const data = await userData();
+        const Data = await userData();
+        setdata(Data);
         const currentUserId = data._id;
-        const roomId = [currentUserId, contactUserId].sort().join("_");
-
+        roomId = [currentUserId, contactUserId].sort().join("_");
+  
         socket.emit("join-room", { roomId, userId: currentUserId });
       }
     };
@@ -35,13 +40,12 @@ const ChatBox = ({ openChat }) => {
           const response = await api.get(`/chat/${contactUserId}`, {
             withCredentials: true,
           });
-
+  
           setChat(response.data);
         }
       } catch (error) {
         if (error.response && error.response.status === 404) {
           console.log("No chat found");
-
           setChat([]);
         } else {
           console.log("Error: ", error.message);
@@ -49,31 +53,46 @@ const ChatBox = ({ openChat }) => {
         }
       }
     };
-
+  
     fetchUserData();
     fetchMessages();
-
+  
     // Listen for new messages
     socket.on(
       "receiveMessage",
       ({ roomId, message, selectedImage, currentUserId, contactUserId }) => {
         setChat((prevChat) => [
-          ...prevChat, // Spread previous messages
+          ...prevChat,
           {
             content: message,
             image: selectedImage,
             sender: currentUserId,
             recipient: contactUserId,
             createdAt: new Date(),
-          }, // New message
+          },
         ]);
       }
     );
-
+  
+    // Listen for typing indicator
+    socket.on("Typing", (currentUserId) => {
+      console.log("User is typing...",ShowTyping);
+     if(currentUserId!=data._id) setShowTyping(true); // Optionally, you can show a visual typing indicator
+    });
+  
+    socket.on('typing-stop',()=>{
+      setShowTyping(false);
+    })
+    // Clean up listeners when component unmounts
     return () => {
       socket.off("receiveMessage");
+      socket.off("Typing");
+      socket.off("typing-stop")
+      setShowTyping(false);
+ 
     };
   }, [contactUserId]);
+
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -84,9 +103,9 @@ const ChatBox = ({ openChat }) => {
 
   const sendMessage = async () => {
     if ((message || selectedImage) && contactUserId) {
-      const data = await userData();
+     
       const currentUserId = data._id;
-      const roomId = [currentUserId, contactUserId].sort().join("_");
+       roomId = [currentUserId, contactUserId].sort().join("_");
       console.log(roomId);
 
       console.log(message);
@@ -141,8 +160,30 @@ const ChatBox = ({ openChat }) => {
     setMessage((prevMessage) => prevMessage + emojiData.emoji);
   };
 
+  
+  const SendTypingIndegator= async ()=>{
+    const data = await userData();
+    const currentUserId = data._id;
+     roomId = [currentUserId, contactUserId].sort().join("_");
+  socket.emit("Typing-indicator",roomId,currentUserId);
+  if (typingTimeoutRef.current) {
+    clearTimeout(typingTimeoutRef.current);
+  }
+  
+  // Hide typing indicator after 3 seconds of no typing
+  typingTimeoutRef.current = setTimeout(() => {
+    socket.emit('Stop-typing',roomId);
+    setShowTyping(false); // Stop showing "Typing..." after 3 seconds
+  }, 1000); 
+  }
+
+
+   
+
   return (
     <>
+
+    {ShowTyping && <div className="absolute left-[60%]  bottom-24 "><TypingIndicator/> </div>}
       {selectedImage && (
         <div className="fixed w-screen h-screen  z-10">
           <div
@@ -303,7 +344,10 @@ const ChatBox = ({ openChat }) => {
           <input
             type="text"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              SendTypingIndegator();
+            }}
             onKeyDown={handleKeyDown}
             placeholder="Type a message"
             className="flex-grow bg-gray-700 text-white rounded-lg px-4 py-2 mx-4 focus:outline-none h-auto"
