@@ -19,7 +19,8 @@ const ChatBox = ({ openChat }) => {
   const typingTimeoutRef = useRef(null); // For tracking typing timeout
   const chatEndRef = useRef(null);
   const ChatuserData = openChat.ChatuserData;
-  const [data, setdata] = useState()
+  const [data, setdata] = useState();
+  const [page, setpage] = useState(1);
   let contactUserId = openChat.ChatuserData?._id;
 
   let roomId;
@@ -33,28 +34,8 @@ const ChatBox = ({ openChat }) => {
       }
     };
 
-    const fetchMessages = async () => {
-      try {
-        if (contactUserId) {
-          const response = await api.get(`/chat/${contactUserId}`, {
-            withCredentials: true,
-          });
-  
-          setChat(response.data);
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          console.log("No chat found");
-          setChat([]);
-        } else {
-          console.log("Error: ", error.message);
-          setChat([]);
-        }
-      }
-    };
-
+   
     fetchUserData();
-    fetchMessages();
 
     // Clean up listeners when component unmounts
     return () => {
@@ -64,6 +45,58 @@ const ChatBox = ({ openChat }) => {
       setShowTyping(false);
     };
 }, [contactUserId]);
+
+const chatBoxRef = useRef(null);
+const handleInfinityScroll = async () => {
+  if (chatBoxRef.current) {
+    console.log(chatBoxRef.current.scrollTop);  // Use the ref to access chatBox
+    if(chatBoxRef.current.scrollTop==0){
+      setTimeout(() => {
+        setpage(prev=>prev+1);
+        
+      }, 1000);
+    }
+  }
+};
+
+useEffect(() => {
+  const chatbox = chatBoxRef.current;
+  
+  if (chatbox) {
+
+
+
+    chatbox.addEventListener("scroll", handleInfinityScroll);
+    return () => chatbox.removeEventListener("scroll", handleInfinityScroll);
+  }
+}, [contactUserId]);
+
+
+useEffect(() => {
+  const fetchMessages = async () => {
+    try {
+      if (contactUserId) {
+        const response = await api.get(`/chat/${contactUserId}?page=${page}`, {
+          withCredentials: true,
+        });
+       let newData= response.data.data;
+       newData.reverse();
+        setChat((prev)=>[...newData,...prev]);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.log("No chat found");
+        setChat([]);
+      } else {
+        console.log("Error: ", error.message);
+        setChat([]);
+      }
+    }
+  };
+
+  fetchMessages();
+}, [contactUserId,page])
+
 
 // New useEffect to handle room joining and socket events after data is updated
 useEffect(() => {
@@ -109,12 +142,12 @@ useEffect(() => {
 
   
 
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-  useEffect(() => {
-    scrollToBottom();
-  }, [chat]);
+  // const scrollToBottom = () => {
+  //   chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // };
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [chat]);
 
   const sendMessage = async () => {
     if ((message || selectedImage) && contactUserId) {
@@ -272,6 +305,7 @@ useEffect(() => {
 
         {/* Chat Body */}
         <div
+        ref={chatBoxRef} 
           id="chatBox"
           className="flex-grow p-4   bg-gray-900 overflow-y-auto"
         >
