@@ -102,7 +102,7 @@ const main = ({ setopenChat, openChat }) => {
                   ...prev,
                   // isOpen: !prev.isOpen,
                   isOpen: true,
-                  ChatuserData: {...prev.ChatuserData,...user}
+                  contactUserData: {...prev.contactUserData,...user}
                 }))
               }
               className="flex items-center p-4 hover:bg-gray-700 cursor-pointer"

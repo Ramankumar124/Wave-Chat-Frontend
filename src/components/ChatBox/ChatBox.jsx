@@ -6,11 +6,12 @@ import { Button } from "../ui/button";
 import EmojiPicker from "emoji-picker-react";
 import TypingIndicator from "./TypingIndicator";
 import Chat from "./Chat";
-
+import { useUser } from "@/context/UserContext";
 
 const socket = io("http://localhost:5000");
 
 const ChatBox = ({ openChat }) => {
+  const {data,setUserData}=useUser();
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -18,58 +19,57 @@ const ChatBox = ({ openChat }) => {
   const [ShowTyping, setShowTyping] = useState(false);
   const typingTimeoutRef = useRef(null); // For tracking typing timeout
   const chatEndRef = useRef(null);
-  const ChatuserData = openChat.ChatuserData;
-  const [data, setdata] = useState();
+  
   const [page, setpage] = useState(1);
-  let contactUserId = openChat.ChatuserData?._id;
+  const [loading, setloading] = useState(true)
+  
+  const contactUserData = openChat.contactUserData;
+  let contactUserId = openChat.contactUserData?._id;
 
-  let roomId;
 
+  
+  console.log("chat",chat);
+  
+  useEffect(() => {
+    if(data){
+      setloading(false);
+    }
+  }, [data])
   
   useEffect(() => {
     const fetchUserData = async () => {
+
       if (contactUserId) {
         const Data = await userData();
-        setdata(Data);  // Set data after fetching
+        setUserData(Data);  // Set data after fetching
       }
     };
-
-   
     fetchUserData();
-
-    // Clean up listeners when component unmounts
-    return () => {
-      socket.off("receiveMessage");
-      socket.off("Typing");
-      socket.off("typing-stop");
-      setShowTyping(false);
-    };
 }, [contactUserId]);
 
-const chatBoxRef = useRef(null);
-const handleInfinityScroll = async () => {
-  if (chatBoxRef.current) {
-    console.log(chatBoxRef.current.scrollTop);  // Use the ref to access chatBox
-    if(chatBoxRef.current.scrollTop==0){
-      setTimeout(() => {
-        setpage(prev=>prev+1);
-        
-      }, 1000);
-    }
-  }
-};
 
-useEffect(() => {
-  const chatbox = chatBoxRef.current;
+// Infinite scroll 
+// const chatBoxRef = useRef(null);
+// const handleInfinityScroll = async () => {
+  //   if (chatBoxRef.current) {
+    //     console.log(chatBoxRef.current.scrollTop);  // Use the ref to access chatBox
+//     if(chatBoxRef.current.scrollTop==100){
+  //       setTimeout(() => {
+//         setpage(prev=>prev+1);
+
+//       }, 1000);
+//     }
+//   }
+// };
+
+// useEffect(() => {
+  //   const chatbox = chatBoxRef.current;
   
-  if (chatbox) {
-
-
-
-    chatbox.addEventListener("scroll", handleInfinityScroll);
-    return () => chatbox.removeEventListener("scroll", handleInfinityScroll);
-  }
-}, [contactUserId]);
+  //   if (chatbox) {
+    //     chatbox.addEventListener("scroll", handleInfinityScroll);
+//     return () => chatbox.removeEventListener("scroll", handleInfinityScroll);
+//   }
+// }, [contactUserId]);
 
 
 useEffect(() => {
@@ -79,9 +79,9 @@ useEffect(() => {
         const response = await api.get(`/chat/${contactUserId}?page=${page}`, {
           withCredentials: true,
         });
-       let newData= response.data.data;
-       newData.reverse();
-        setChat((prev)=>[...newData,...prev]);
+        let newData= response.data.data;
+        newData.reverse();     
+        setChat((prev)=>[...newData]);
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -100,60 +100,74 @@ useEffect(() => {
 
 // New useEffect to handle room joining and socket events after data is updated
 useEffect(() => {
-    if (data && contactUserId) {
-        const currentUserId = data._id;
-        const roomId = [currentUserId, contactUserId].sort().join("_");
+  if (data && contactUserId) {
+      const currentUserId = data._id;
+      const roomId = [currentUserId, contactUserId].sort().join("_");
 
-        socket.emit("join-room", { roomId, userId: currentUserId });
+      socket.emit("join-room", { roomId, userId: currentUserId });
 
-        socket.on(
-          "receiveMessage",
-          ({ roomId, message, selectedImage, currentUserId, contactUserId }) => {
-            setChat((prevChat) => [
-              ...prevChat,
-              {
-                content: message,
-                image: selectedImage,
-                sender: currentUserId,
-                recipient: contactUserId,
-                createdAt: new Date(),
-              },
-            ]);
-          }
-        );
+      socket.on("receiveMessage", ({ roomId: receivedRoomId, message, selectedImage, currentUserId, contactUserId }) => {
+        // console.log(` room id ${roomId}, message, img  ${selectedImage}, currentuserid ${this.currentUserId}, contactusrid ${this.contactUserId} `);
+        const senderId = data._id;
+     const reciverId  = contactUserData._id;
+        const activeRoomId = [senderId,reciverId].sort().join("_");        
+      
+        if (receivedRoomId === activeRoomId) {
+          setChat((prevChat) => [
+            ...prevChat,
+            {
+              content: message,
+              image: selectedImage,
+              sender: currentUserId,
+              recipient: contactUserId,
+              createdAt: new Date(),
+            },
+          ]);
+        }
+      });
+      
+      
 
-        // Listen for typing indicator
-        socket.on("Typing", (currentUserId) => {
-          if (currentUserId !== data._id) setShowTyping(true);
-        });
+      socket.on("Typing", (roomId,currentUserId) => {
+        const activeRoomId = [data._id, contactUserId].sort().join("_");
+        
+        if (currentUserId !== data._id && roomId === activeRoomId) {
+          setShowTyping(true);
+        }
+      });
+      
+      socket.on("typing-stop", () => {
+        setShowTyping(false);
+      });
+      
+      socket.on('typing-stop', () => {
+        setShowTyping(false);
+      });
 
-        socket.on('typing-stop', () => {
-          setShowTyping(false);
-        });
-    }
+      // Handle notification for new message
+ 
+  }
 
-    return () => {
-      socket.off("receiveMessage");
-      socket.off("Typing");
-      socket.off("typing-stop");
-    };
-}, [data, contactUserId]);  // Re-run this effect when data or contactUserId changes
+  return () => {
+    socket.off("receiveMessage");
+    socket.off("Typing");
+    socket.off("typing-stop");
+  };
+}, [data, contactUserId]);
 
 
-  
-
-  // const scrollToBottom = () => {
-  //   chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  // };
-  // useEffect(() => {
-  //   scrollToBottom();
-  // }, [chat]);
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [chat]);
 
   const sendMessage = async () => {
     if ((message || selectedImage) && contactUserId) {
      
       const currentUserId = data._id;
-       roomId = [currentUserId, contactUserId].sort().join("_");
+      const roomId = [currentUserId, contactUserId].sort().join("_");
       console.log(roomId);
 
       console.log(message);
@@ -170,6 +184,7 @@ useEffect(() => {
   };
 
   if (!openChat.isOpen) {
+
     return (
       <div className="w-2/3 h-full flex justify-center items-center text-black text-8xl">
         Select a chat to start messaging
@@ -212,7 +227,7 @@ useEffect(() => {
   const SendTypingIndegator= async ()=>{    
     const currentUserId = data._id;
     console.log(currentUserId);
-     roomId = [currentUserId, contactUserId].sort().join("_");
+    const roomId = [currentUserId, contactUserId].sort().join("_");
   socket.emit("Typing-indicator",roomId,currentUserId);
   if (typingTimeoutRef.current) {
     clearTimeout(typingTimeoutRef.current);
@@ -226,7 +241,9 @@ useEffect(() => {
   }
 
 
-   
+if(loading){
+  return <div>loading... ho rha hai</div>
+}   
 
   return (
     <>
@@ -285,7 +302,7 @@ useEffect(() => {
               <i className="fas fa-arrow-left"></i>
             </button>
             <div className="flex flex-col">
-              <h2 className="text-lg font-bold">{ChatuserData.name}</h2>
+              <h2 className="text-lg font-bold">{contactUserData.name}</h2>
               <span className="text-sm text-gray-400">
                 last seen at 6:46 PM
               </span>
@@ -305,7 +322,7 @@ useEffect(() => {
 
         {/* Chat Body */}
         <div
-        ref={chatBoxRef} 
+        // ref={chatBoxRef} 
           id="chatBox"
           className="flex-grow p-4   bg-gray-900 overflow-y-auto"
         >

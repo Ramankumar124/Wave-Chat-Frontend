@@ -8,7 +8,7 @@ const Home = () => {
 
   const [openChat, setopenChat] = useState({
     isOpen:false,
-    ChatuserData:{}
+    contactUserData:{}
   })
 
   const navigate=useNavigate()
