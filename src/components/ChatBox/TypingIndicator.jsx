@@ -12,7 +12,7 @@ const TypingIndicator = () => {
 
 const styles = {
   typingIndicator: {
-    backgroundColor: '#E6E7ED',
+    backgroundColor: 'trasnparent',
     width: 'auto',
     borderRadius: '50px',
     padding: '15px',

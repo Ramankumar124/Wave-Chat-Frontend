@@ -7,11 +7,12 @@ import EmojiPicker from "emoji-picker-react";
 import TypingIndicator from "./TypingIndicator";
 import Chat from "./Chat";
 import { useUser } from "@/context/UserContext";
+import { Toaster ,toast} from "react-hot-toast";
 
 const socket = io("http://localhost:5000");
 
 const ChatBox = ({ openChat }) => {
-  const {data,setUserData}=useUser();
+  const {data,setUserData,notification,setnotification}=useUser();
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -28,24 +29,50 @@ const ChatBox = ({ openChat }) => {
 
 
   
-  console.log("chat",chat);
   
-  useEffect(() => {
-    if(data){
-      setloading(false);
-    }
-  }, [data])
+  console.log("chat",chat);
   
   useEffect(() => {
     const fetchUserData = async () => {
 
-      if (contactUserId) {
         const Data = await userData();
         setUserData(Data);  // Set data after fetching
-      }
+      
     };
     fetchUserData();
-}, [contactUserId]);
+}, []);
+
+  useEffect(() => {
+    if(data){
+        socket.emit("setup",data);     
+      setloading(false);
+    }
+  }, [data])
+  
+
+  useEffect(() => {
+    socket.on("notify", ({ message, currentUserId ,socketUserName}) => {
+      if (contactUserId) {
+        console.log("contact " + contactUserId + " current " + currentUserId);
+      }
+      console.log(notification);
+      
+      // Checking if the notification is not for the current chat
+      if (!contactUserId || (contactUserId !== currentUserId && contactUserId !== 'undefined')) {
+        // alert(`notification: ${message}`);
+        setnotification((prev)=>[...prev,message]);
+        
+        toast.success(`${socketUserName+':' +message}`,{autoClose: false});
+        
+        console.log("received notification:", message);
+      }
+    });
+  
+    return () => {
+      socket.off("notify");
+    };
+  }, [contactUserId]); // <-- Add contactUserId to dependency array
+  
 
 
 // Infinite scroll 
@@ -101,6 +128,7 @@ useEffect(() => {
 // New useEffect to handle room joining and socket events after data is updated
 useEffect(() => {
   if (data && contactUserId) {
+
       const currentUserId = data._id;
       const roomId = [currentUserId, contactUserId].sort().join("_");
 
@@ -186,7 +214,7 @@ useEffect(() => {
   if (!openChat.isOpen) {
 
     return (
-      <div className="w-2/3 h-full flex justify-center items-center text-black text-8xl">
+      <div className="w-2/3 h-auto flex justify-center items-center text-black text-8xl">
         Select a chat to start messaging
       </div>
     );
@@ -242,7 +270,10 @@ useEffect(() => {
 
 
 if(loading){
-  return <div>loading... ho rha hai</div>
+  return <div>loading... ho rha hai
+    <div><Toaster/></div>
+  </div>
+  
 }   
 
   return (
@@ -293,9 +324,9 @@ if(loading){
         </div>
       )}
 
-      <div className="flex flex-col w-2/3 h-screen bg-gray-900 text-white ">
+      <div className="flex flex-col w-2/3 h-full bg-gray-900 text-white ">
         {/* Top NavBar */}
-
+        <div><Toaster/></div>
         <div className="flex items-center justify-between  p-4 bg-gray-800">
           <div className="flex items-center space-x-4">
             <button className="p-2 rounded-lg bg-gray-700">

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { userData } from "@/userData";
 import api from '@/api'
 import Cookies from 'js-cookie'
+import { io } from "socket.io-client";
+
 
 import {
   DropdownMenu,
@@ -21,7 +23,6 @@ const main = ({ setopenChat, openChat }) => {
       try {
         const data = await userData();
         // console.log(data);
-        
         setContacts(data.contacts);
    
         
