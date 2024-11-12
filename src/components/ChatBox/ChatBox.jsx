@@ -8,11 +8,12 @@ import TypingIndicator from "./TypingIndicator";
 import Chat from "./Chat";
 import { useUser } from "@/context/UserContext";
 import { Toaster ,toast} from "react-hot-toast";
+import Call from "../Call/Call";
 
 const socket = io("http://localhost:5000");
 
-const ChatBox = ({ openChat }) => {
-  const {data,setUserData,notification,setnotification}=useUser();
+const ChatBox = () => {
+  const {data,setUserData,notification,setnotification,openChat,newSocket,setnewSocket,toggleCallBox,setToggleCallBox,isCallActive, setIsCallActive}=useUser();
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -20,14 +21,16 @@ const ChatBox = ({ openChat }) => {
   const [ShowTyping, setShowTyping] = useState(false);
   const typingTimeoutRef = useRef(null); // For tracking typing timeout
   const chatEndRef = useRef(null);
-  
+  // const [toggleCallBox,setToggleCallBox]=useState(false);
   const [page, setpage] = useState(1);
   const [loading, setloading] = useState(true)
+  
   
   const contactUserData = openChat.contactUserData;
   let contactUserId = openChat.contactUserData?._id;
 
 
+  setnewSocket(socket);
   
   
   console.log("chat",chat);
@@ -269,16 +272,26 @@ useEffect(() => {
   }
 
 
+  // socket.on('incomming-call',()=>{
+  //   alert("call a rhi hai");
+  // })
+  const handleStartCall=()=>{
+    setIsCallActive(true);
+    setToggleCallBox(true);
+  }
+
 if(loading){
   return <div>loading... ho rha hai
     <div><Toaster/></div>
   </div>
   
 }   
+const currentUserId = data._id;
+const roomId = [currentUserId, contactUserId].sort().join("_");
 
   return (
     <>
-
+    {toggleCallBox && <Call socket={socket} contactUserId={contactUserId}/>}
     {ShowTyping && <div className="absolute left-[60%]  bottom-24 "><TypingIndicator/> </div>}
       
       {selectedImage && (
@@ -342,9 +355,9 @@ if(loading){
 
           {/* Search bar and 3-dot menu */}
           <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-lg bg-gray-700">
-              <i className="fas fa-search"></i>
-            </button>
+            <button onClick={handleStartCall} className="p-2 rounded-lg bg-gray-700">
+            <i class="fa-solid fa-video"></i>
+                        </button>
             <button className="p-2 rounded-lg bg-gray-700">
               <i className="fas fa-ellipsis-v"></i>
             </button>

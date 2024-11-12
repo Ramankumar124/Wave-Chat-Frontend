@@ -1,21 +1,46 @@
-import { createContext,useContext,useState} from 'react'
+import { createContext, useContext, useState } from "react";
 
-const UserContext=createContext();
+const UserContext = createContext();
 
+export const UserProvider = ({ children }) => {
+  const [data, setdata] = useState(null);
+  const [notification, setnotification] = useState([]);
+  const [openChat, setopenChat] = useState({
+    isOpen: false,
+    contactUserData: {},
+  });
 
-export const UserProvider=({children})=>{
+  const [newSocket, setnewSocket] = useState(undefined);
+  const [toggleCallBox, setToggleCallBox] = useState(false);
+  const [stream, setstream] = useState();
+  const [isCallActive, setIsCallActive] = useState(false);
+  const setUserData = (user) => {
+    setdata(user);
+  };
 
-    const [data, setdata] = useState(null);
-    const [notification, setnotification] = useState([])
-    const setUserData=(user)=>{
-        setdata(user);
-    }
-
-    return <UserContext.Provider value={{data,setUserData,notification,setnotification}}>
-        {children}
+  return (
+    <UserContext.Provider
+      value={{
+        data,
+        setUserData,
+        notification,
+        setnotification,
+        openChat,
+        setopenChat,
+        newSocket,
+        setnewSocket,
+        toggleCallBox,
+        setToggleCallBox,
+        stream,
+        setstream,
+        isCallActive, 
+        setIsCallActive
+      }}
+    >
+      {children}
     </UserContext.Provider>
-}
-export  const useUser=()=>{
-    return  useContext(UserContext);
-}
-
+  );
+};
+export const useUser = () => {
+  return useContext(UserContext);
+};

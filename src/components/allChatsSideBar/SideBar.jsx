@@ -3,6 +3,8 @@ import { userData } from "@/userData";
 import api from '@/api'
 import Cookies from 'js-cookie'
 import { io } from "socket.io-client";
+import { useUser } from "@/context/UserContext";
+
 
 
 import {
@@ -15,8 +17,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 
-const main = ({ setopenChat, openChat }) => {
+const main = () => {
   const [Contacts, setContacts] = useState([]);
+  const {openChat,setopenChat}=useUser();
 
   useEffect(() => {
     const fetchUserData = async () => {

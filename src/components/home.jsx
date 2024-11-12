@@ -7,10 +7,7 @@ import Header from './Header/Header'
 const Home = () => {
 
 
-  const [openChat, setopenChat] = useState({
-    isOpen:false,
-    contactUserData:{}
-  })
+
 
   const navigate=useNavigate()
   useEffect(() => {
@@ -24,8 +21,8 @@ const Home = () => {
   return (
     <div className='w-screen h-screen'>
     <Header/>
-      <div className='flex w-full h-[95%]'>    <Sidebar setopenChat={setopenChat} openChat={openChat} />
-          <ChatBox openChat={openChat}/>
+      <div className='flex w-full h-[95%]'>    <Sidebar  />
+          <ChatBox />
           </div>
 
     </div>
