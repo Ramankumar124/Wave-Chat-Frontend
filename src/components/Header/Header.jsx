@@ -3,7 +3,7 @@ import { useUser } from "@/context/UserContext";
 import NotificationSound from "../../assets/NotificationSound.mp3";
 import Call from "../Call/Call";
 import { toast, Toaster } from "react-hot-toast";
-import { messaging } from "@/firebase";
+import { messaging } from "public/firebase";
 import { getToken } from "firebase/messaging";
 const Header = () => {
 
