@@ -9,7 +9,7 @@ import Chat from "./Chat";
 import { useUser } from "@/context/UserContext";
 import { Toaster ,toast} from "react-hot-toast";
 import Call from "../Call/Call";
-
+import messageSoundBubble from "../../assets/messageSoundBubble.mp3"
 const socket = io("http://localhost:5000");
 
 const ChatBox = () => {
@@ -29,7 +29,7 @@ const ChatBox = () => {
   const contactUserData = openChat.contactUserData;
   let contactUserId = openChat.contactUserData?._id;
 
-
+  const  audioPlayer=useRef();
   setnewSocket(socket);
   
   
@@ -155,9 +155,15 @@ useEffect(() => {
             },
           ]);
         }
+
+      
+       
       });
       
-      
+      socket.on("soundpopup",()=>{
+           
+        audioPlayer.current.play();
+      })
 
       socket.on("Typing", (roomId,currentUserId) => {
         const activeRoomId = [data._id, contactUserId].sort().join("_");
@@ -202,13 +208,23 @@ useEffect(() => {
       console.log(roomId);
 
       console.log(message);
-
+      console.log("fb token",contactUserData.firebaseToken
+      );
+      
+      const reciverName=contactUserData.name;
+      console.log(reciverName);
+      
+   const reciverFBToken=contactUserData.firebaseToken;
       socket.emit("sendMessage", {
         roomId,
         message,
         selectedImage,
         currentUserId,
         contactUserId,
+        reciverFBToken,
+        reciverName
+
+
       });
       setMessage("");
     }
@@ -293,7 +309,7 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
     <>
     {toggleCallBox && <Call socket={socket} contactUserId={contactUserId}/>}
     {ShowTyping && <div className="absolute left-[60%]  bottom-24 "><TypingIndicator/> </div>}
-      
+      <audio src={messageSoundBubble} ref={audioPlayer} ></audio>
       {selectedImage && (
         <div className="fixed w-screen h-screen  z-10">
           <div

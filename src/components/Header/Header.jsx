@@ -3,17 +3,30 @@ import { useUser } from "@/context/UserContext";
 import NotificationSound from "../../assets/NotificationSound.mp3";
 import Call from "../Call/Call";
 import { toast, Toaster } from "react-hot-toast";
-import { messaging } from "public/firebase";
+import { messaging } from "../../firebase";
 import { getToken } from "firebase/messaging";
+import Cookies from 'js-cookie';
+import api from "@/api";
 const Header = () => {
 
 
   async function requestPermission() {
     const permission = await Notification.requestPermission();
+    
     if (permission === "granted") {
       // Generate Token
-   const token=await  getToken(messaging,{vapidKey:"BApqSCZ8GP01NlRztqshlwYKnKW-HoRPFVMtVismbf4DaoqmusYlDAwXKUwJIiizpWS1Nf6LKgH36bRm9rgeEV8"})
-      console.log("Token Gen", token);
+   const FBtoken=await  getToken(messaging,{vapidKey:"BApqSCZ8GP01NlRztqshlwYKnKW-HoRPFVMtVismbf4DaoqmusYlDAwXKUwJIiizpWS1Nf6LKgH36bRm9rgeEV8"})
+      console.log("Token Gen", FBtoken);
+      // const email=data.email
+      try {
+        const test='sddf'
+      const response=  await  api.post("/Notification/storeToken",{FBtoken})
+        console.log(response);
+        
+      } catch (error) {
+        console.log(error);
+        
+      }
       // Send this token  to server ( db)
     } else if (permission === "denied") {
       alert("You denied for the notification");
@@ -22,16 +35,19 @@ const Header = () => {
 
   useEffect(() => {
     // Req user for notification permission
+    const cookieValue = Cookies.get('token');
+    console.log(cookieValue);
+    
     requestPermission();
   }, []);
 
 
 
-  const { notification, newSocket,toggleCallBox,setToggleCallBox,  stream,setstream,isCallActive, setIsCallActive
+  const { notification, newSocket,toggleCallBox,setToggleCallBox,data,  stream,setstream,isCallActive, setIsCallActive
   } = useUser();
   const audioPlayer = useRef(null);
   const [incomingCall, setIncomingCall] = useState(false); // State to control popup visibility
-  const [data, setdata] = useState();
+  const [icomingCalldata, seticomingCalldata] = useState();
 
   useEffect(() => {
     function playAudio() {
@@ -43,9 +59,9 @@ const Header = () => {
   useEffect(() => {
     if (newSocket) {
       // Define event listeners
-      const handleIncomingCall = (data) => {
+      const handleIncomingCall = (icomingCalldata) => {
         setIncomingCall(true);
-        setdata(data);
+        seticomingCalldata(icomingCalldata);
       };
   
       const handleCallRejected =  async () => {
@@ -69,7 +85,7 @@ const Header = () => {
   }, [newSocket]);
 
   const handleAnswerCall = () => {
-    console.log("data header", data);
+    console.log("icomingCalldata header", icomingCalldata);
     setIncomingCall(false); // Hide popup after answering
     setToggleCallBox(true);
     // Add your answer call logic here
@@ -78,7 +94,7 @@ const Header = () => {
   };
 
   const handleRejectCall =  () => {
-    newSocket.emit("call-declined", data._id);
+    newSocket.emit("call-declined", icomingCalldata._id);
     setIncomingCall(false); // Hide popup after answering
   };
 
@@ -88,6 +104,7 @@ const Header = () => {
       setstream(null);
     }
   };
+
 
   
   return (
@@ -105,7 +122,7 @@ const Header = () => {
               {/* <img src="" alt="" /> */}
             </div>
             <div className="flex flex-col items-start">
-              <p className="text-2xl font-bold">{data.name}</p>
+              <p className="text-2xl font-bold">{icomingCalldata.name}</p>
               <p className="text-sm font-semibold ml-2">Is now Calling..</p>
             </div>
           </div>
