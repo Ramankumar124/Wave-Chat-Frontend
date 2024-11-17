@@ -7,8 +7,9 @@ import Home from './components/home'
 import { useEffect } from 'react'
 import { onMessage } from 'firebase/messaging'
 import { messaging } from './firebase'
-function App() {
 
+function App() {
+ 
 useEffect(() => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/firebase-messaging-sw.js')

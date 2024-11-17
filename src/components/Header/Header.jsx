@@ -54,6 +54,8 @@ const Header = () => {
       audioPlayer.current.play();
     }
     if (notification.length > 0) playAudio();
+    console.log("notification ",notification);
+    
   }, [notification]);
 
   useEffect(() => {

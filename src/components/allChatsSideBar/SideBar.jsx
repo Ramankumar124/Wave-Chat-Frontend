@@ -19,7 +19,7 @@ import {
 
 const main = () => {
   const [Contacts, setContacts] = useState([]);
-  const {openChat,setopenChat}=useUser();
+  const {openChat,setopenChat,newSocket}=useUser();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -33,9 +33,32 @@ const main = () => {
         console.log("Error fetching user data:", error);
       }
     };
-
+  
     fetchUserData();
   }, []);
+
+useEffect(() => {
+  if (newSocket) {
+    newSocket.on("Online-Users", (onlineUser) => {
+      // console.log("Online users:", onlineUser);
+
+      // Update the Contacts state with online status
+      setContacts((prevContacts) =>
+        prevContacts.map((contact) => ({
+          ...contact,
+          isOnline: onlineUser.some((user) => user.email === contact.email),
+        }))
+      );
+    });
+  }
+
+  // Clean up the socket listener when the component unmounts
+  return () => {
+    if (newSocket) {
+      newSocket.off("Online-Users");
+    }
+  };
+}, [newSocket]);
 
 
   const handleLogout = async () => {
@@ -112,7 +135,9 @@ const main = () => {
               className="flex items-center p-4 hover:bg-gray-700 cursor-pointer"
             >
               {/* Circle Avatar */}
-              <div className="w-12 h-12 rounded-full bg-gray-600 flex-shrink-0"></div>
+              <div className="w-12 h-12 rounded-full bg-gray-600 flex-shrink-0">
+            { user.isOnline &&   <div className="relative left-8 bg-green-500 h-3 w-3 rounded-full "></div>
+  }            </div>
               {/* Chat Info */}
               <div className="ml-4 flex-grow border-b border-gray-700 pb-4">
                 <div className="flex justify-between">

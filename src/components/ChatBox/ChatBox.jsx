@@ -47,8 +47,8 @@ const ChatBox = () => {
 
   useEffect(() => {
     if(data){
-        socket.emit("setup",data);     
-      setloading(false);
+        socket.emit("setup",({data,OrignalSocketId:socket.id}));     
+      setloading(false);  
     }
   }, [data])
   
@@ -73,6 +73,7 @@ const ChatBox = () => {
   
     return () => {
       socket.off("notify");
+      
     };
   }, [contactUserId]); // <-- Add contactUserId to dependency array
   
