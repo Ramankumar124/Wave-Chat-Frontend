@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging } from "firebase/messaging";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 const firebaseConfig = {
     apiKey: "AIzaSyCVsrSdA_zdgrlI4etWPJ9UcW9EIyJl05w",
     authDomain: "wave-chat-2f232.firebaseapp.com",
@@ -13,5 +14,8 @@ const firebaseConfig = {
  // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const messaging = getMessaging(firebaseApp);
-
+const app = initializeApp(firebaseConfig);
 export { messaging };
+const auth = getAuth();
+const googleProvider = new GoogleAuthProvider();
+export { auth, googleProvider };

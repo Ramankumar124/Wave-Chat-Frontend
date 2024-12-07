@@ -5,6 +5,10 @@ import { useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 import Cookies from 'js-cookie'
 import {toast,Toaster} from  'react-hot-toast'
+import { auth, googleProvider } from '@/firebase';
+import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+
+
 const Login = () => {
   const [password, setPassword] = useState('');
   const [email, setemail] = useState('');
@@ -23,7 +27,7 @@ const navigate=useNavigate()
  e.preventDefault();
  try{
 
-   let response =await api.post('auth/login',{password,email})
+   let response =await api.post('auth/login',{password,email});
    if(response.status===200){
      toast.success("Login Successful"); 
      
@@ -37,6 +41,40 @@ const navigate=useNavigate()
   }
      
     
+  }
+
+  const handleGoogleLogin=async ()=>{
+   try {
+    const result = await signInWithPopup(auth, googleProvider)
+    console.log(result);
+    let response=await api.post('auth/googleLogin',{data:result});
+    console.log(response);
+    
+    if(response.status==200){
+      navigate('/home');
+    }
+   } catch (error) {
+    console.log(error);
+    
+   }
+  }
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("User is signed in:", user.email);
+    } else {
+      console.log("User is signed out.");
+    }
+  });
+  
+  const logout=async ()=>{
+    try {
+      await signOut(auth);
+      console.log("User successfully logged out.");
+      // Redirect the user to the login page or home
+      
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   }
   
   return (
@@ -73,8 +111,12 @@ const navigate=useNavigate()
           >
             Login
           </button>
-        </form>
 
+        </form>
+        <div className='bg-gray-400 w-[100px] h-10'>
+          <button onClick={handleGoogleLogin}> Google </button>
+        </div>
+          <button onClick={logout}>logout</button>
         <div className="mt-4 text-center">
           <p>
             Don't have an account?{' '}

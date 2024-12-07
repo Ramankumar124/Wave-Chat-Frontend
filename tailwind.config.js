@@ -7,6 +7,21 @@ export default {
     ],
   theme: {
   	extend: {
+
+		animation: {
+			enter: 'fadeIn 0.5s ease-out',
+			leave: 'fadeOut 0.5s ease-in',
+		  },
+		  keyframes: {
+			fadeIn: {
+			  from: { opacity: 0 },
+			  to: { opacity: 1 },
+			},
+			fadeOut: {
+			  from: { opacity: 1 },
+			  to: { opacity: 0 },
+			},
+		  },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
