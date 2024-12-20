@@ -22,7 +22,7 @@ useEffect(() => {
   }
   
 
-}, [])
+},[])
 
 useEffect(() => {
   onMessage(messaging, (payload) => {

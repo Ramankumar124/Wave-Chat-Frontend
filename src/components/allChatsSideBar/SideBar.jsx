@@ -19,7 +19,7 @@ import {
 
 const main = () => {
   const [Contacts, setContacts] = useState([]);
-  const {openChat,setopenChat,newSocket}=useUser();
+  const {openChat,setopenChat,newSocket,data,setUserData}=useUser();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -27,6 +27,7 @@ const main = () => {
         const data = await userData();
         // console.log(data);
         setContacts(data.contacts);
+        setUserData(data);
    
         
       } catch (error) {
@@ -36,6 +37,10 @@ const main = () => {
   
     fetchUserData();
   }, []);
+useEffect(() => {
+ if(data) setContacts(data.contacts);
+  setUserData(data);
+}, [data])
 
 useEffect(() => {
   if (newSocket) {
@@ -58,7 +63,7 @@ useEffect(() => {
       newSocket.off("Online-Users");
     }
   };
-}, [newSocket]);
+}, [newSocket,data]);
 
 
   const handleLogout = async () => {
@@ -74,21 +79,7 @@ useEffect(() => {
 
   return (
     <div className="w-1/3 h-full bg-gray-900 flex border-gray-500 border-r-2 text-white">
-      <div
-        id="sideMenubar"
-        className="w-16 h-full p-4 text-2xl font-bold bg-gray-600 text-white  flex flex-col justify-between"
-      >
-        <div className="flex flex-col gap-7">
-          <i class="fa-regular fa-comment-dots"></i>
-          <i class="fa-regular fa-life-ring"></i>
-          <i class="fa-solid fa-comment"></i>
-          <i class="fa-solid fa-users"></i>
-        </div>
-        <div>
-          <i class="fa-solid fa-gear"></i>
-          <div className="w-4 h-4 rounded-full bg-red-500"></div>
-        </div>
-      </div>
+      
       <div id="mainChat" className="w-full h-full flex flex-col items">
         <div
           id="topBar"
@@ -96,7 +87,7 @@ useEffect(() => {
         >
           <p>Chats</p>
           <div className="flex gap-4">
-            <i class="fa-solid fa-comment-medical"></i>
+           
           <DropdownMenu>
   <DropdownMenuTrigger>  <i class="fa-solid fa-ellipsis-vertical w-4"></i></DropdownMenuTrigger>
   <DropdownMenuContent className="bg-slate-400 ">
