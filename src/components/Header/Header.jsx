@@ -5,27 +5,31 @@ import Call from "../Call/Call";
 import { toast, Toaster } from "react-hot-toast";
 import { messaging } from "../../firebase";
 import { getToken } from "firebase/messaging";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import api from "@/api";
+import UserAddBox from "../AddNewUserBox/UserAddBox";
+
+
 const Header = () => {
-
-
   async function requestPermission() {
     const permission = await Notification.requestPermission();
-    
+
     if (permission === "granted") {
       // Generate Token
-   const FBtoken=await  getToken(messaging,{vapidKey:"BApqSCZ8GP01NlRztqshlwYKnKW-HoRPFVMtVismbf4DaoqmusYlDAwXKUwJIiizpWS1Nf6LKgH36bRm9rgeEV8"})
+      const FBtoken = await getToken(messaging, {
+        vapidKey:
+          "BApqSCZ8GP01NlRztqshlwYKnKW-HoRPFVMtVismbf4DaoqmusYlDAwXKUwJIiizpWS1Nf6LKgH36bRm9rgeEV8",
+      });
       console.log("Token Gen", FBtoken);
       // const email=data.email
       try {
-        const test='sddf'
-      const response=  await  api.post("/Notification/storeToken",{FBtoken})
+        const test = "sddf";
+        const response = await api.post("/Notification/storeToken", {
+          FBtoken,
+        });
         console.log(response);
-        
       } catch (error) {
         console.log(error);
-        
       }
       // Send this token  to server ( db)
     } else if (permission === "denied") {
@@ -35,15 +39,22 @@ const Header = () => {
 
   useEffect(() => {
     // Req user for notification permission
-    const cookieValue = Cookies.get('token');
+    const cookieValue = Cookies.get("token");
     console.log(cookieValue);
-    
+
     requestPermission();
   }, []);
 
-
-
-  const { notification, newSocket,toggleCallBox,setToggleCallBox,data,  stream,setstream,isCallActive, setIsCallActive
+  const {
+    notification,
+    newSocket,
+    toggleCallBox,
+    setToggleCallBox,
+    data,
+    stream,
+    setstream,
+    isCallActive,
+    setIsCallActive,
   } = useUser();
   const audioPlayer = useRef(null);
   const [incomingCall, setIncomingCall] = useState(false); // State to control popup visibility
@@ -54,8 +65,7 @@ const Header = () => {
       audioPlayer.current.play();
     }
     if (notification.length > 0) playAudio();
-    console.log("notification ",notification);
-    
+    console.log("notification ", notification);
   }, [notification]);
 
   useEffect(() => {
@@ -65,19 +75,19 @@ const Header = () => {
         setIncomingCall(true);
         seticomingCalldata(icomingCalldata);
       };
-  
-      const handleCallRejected =  async () => {
+
+      const handleCallRejected = async () => {
         location.reload();
         console.log("call declined");
         setIncomingCall(false);
         setToggleCallBox(false);
         stopMediaStream();
       };
-  
+
       // Attach event listeners
       newSocket.on("incomming-call", handleIncomingCall);
       newSocket.on("call-rejected", handleCallRejected);
-  
+
       // Cleanup function to remove listeners on unmount or dependency change
       return () => {
         newSocket.off("incomming-call", handleIncomingCall);
@@ -92,31 +102,28 @@ const Header = () => {
     setToggleCallBox(true);
     // Add your answer call logic here
     console.log(stream);
-    
   };
 
-  const handleRejectCall =  () => {
+  const handleRejectCall = () => {
     newSocket.emit("call-declined", icomingCalldata._id);
     setIncomingCall(false); // Hide popup after answering
   };
 
   const stopMediaStream = () => {
     if (stream) {
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
       setstream(null);
     }
   };
 
-
-  
   return (
-    <div className="bg-slate-500 w-full h-[5%] text-white text-3xl">
+    <div className="bg-slate-500 w-full h-[5%] text-white text-3xl flex justify-between items-center">
       {notification.length}
       <div>
         <Toaster />
       </div>
-      {newSocket && newSocket.id}
-      {(toggleCallBox &&   !isCallActive) && <Call socket={newSocket} />} {/* Incoming Call Popup */}
+      {toggleCallBox && !isCallActive && <Call socket={newSocket} />}{" "}
+      {/* Incoming Call Popup */}
       {incomingCall && (
         <div className="fixed top-5 left-1/2 transform -translate-x-1/2 p-4  bg-[#363F48] text-white rounded-xl shadow-lg text-center">
           <div className="w-full h-1/2 flex items-center gap-3">
@@ -144,6 +151,14 @@ const Header = () => {
         </div>
       )}
       <audio ref={audioPlayer} src={NotificationSound}></audio>
+      <div className=" flex mr-7 gap-5">
+        <div>
+           <UserAddBox/>
+        </div>
+        <div>
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </div>
+      </div>
     </div>
   );
 };
