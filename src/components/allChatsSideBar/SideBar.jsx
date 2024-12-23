@@ -135,7 +135,7 @@ useEffect(() => {
                   <h2 className="font-semibold text-white">{user.name}</h2>
                   <span className="text-sm text-gray-400">6:45 PM</span>
                 </div>
-                <p className="text-gray-400">Last message...</p>
+                <p className="text-gray-400"></p>
               </div>
             </div>
           ))}

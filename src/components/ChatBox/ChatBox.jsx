@@ -63,7 +63,14 @@ const ChatBox = () => {
       // Checking if the notification is not for the current chat
       if (!contactUserId || (contactUserId !== currentUserId && contactUserId !== 'undefined')) {
         // alert(`notification: ${message}`);
-        setnotification((prev)=>[...prev,message]);
+        let newNotification = {
+          message,
+          messageTime: new Date(),
+           title: socketUserName,
+            userId: currentUserId,
+          
+        }
+        setnotification((prev)=>[...prev,newNotification]);
         
         toast.success(`${socketUserName+':' +message}`,{autoClose: false});
         toast.custom((t) => (

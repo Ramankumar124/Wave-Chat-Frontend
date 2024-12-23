@@ -171,6 +171,7 @@ useEffect(() => {
           <p className="text-xl font-light">{user.name}</p>
           <button
             onClick={() => sendFriendRequest(user)}
+            disabled={isPending}
             className={`h-7 w-24 text-white rounded-full text-md font-bold py-1 flex items-center justify-center ${
               isPending ? "bg-red-600" : "bg-blue-600"
             }`}

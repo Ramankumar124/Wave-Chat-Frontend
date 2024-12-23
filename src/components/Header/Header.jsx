@@ -7,7 +7,8 @@ import { messaging } from "../../firebase";
 import { getToken } from "firebase/messaging";
 import Cookies from "js-cookie";
 import api from "@/api";
-import UserAddBox from "../AddNewUserBox/UserAddBox";
+import UserAddBox from "./AddNewUserBox/UserAddBox";
+import NotificationPanel from "./NotificationPanel/NotificationPanel";
 
 
 const Header = () => {
@@ -23,7 +24,8 @@ const Header = () => {
       console.log("Token Gen", FBtoken);
       // const email=data.email
       try {
-        const test = "sddf";
+        
+
         const response = await api.post("/Notification/storeToken", {
           FBtoken,
         });
@@ -59,6 +61,7 @@ const Header = () => {
   const audioPlayer = useRef(null);
   const [incomingCall, setIncomingCall] = useState(false); // State to control popup visibility
   const [icomingCalldata, seticomingCalldata] = useState();
+  const [toggleNotfication, settoggleNotfication] = useState(false)
 
   useEffect(() => {
     function playAudio() {
@@ -156,7 +159,12 @@ const Header = () => {
            <UserAddBox/>
         </div>
         <div>
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    
+        <NotificationPanel/>
+        </div>
+        <div >
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        
         </div>
       </div>
     </div>
