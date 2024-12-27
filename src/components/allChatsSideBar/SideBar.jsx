@@ -4,6 +4,7 @@ import api from '@/api'
 import Cookies from 'js-cookie'
 import { io } from "socket.io-client";
 import { useUser } from "@/context/UserContext";
+import userDefaultImage from "@/assets/userDefaultImage.jpeg";
 
 
 
@@ -26,8 +27,10 @@ const main = () => {
       try {
         const data = await userData();
         // console.log(data);
+        if(data) {
         setContacts(data.contacts);
         setUserData(data);
+      }
    
         
       } catch (error) {
@@ -38,8 +41,12 @@ const main = () => {
     fetchUserData();
   }, []);
 useEffect(() => {
- if(data) setContacts(data.contacts);
+ if(data) {
+  setContacts(data.contacts);
   setUserData(data);
+  console.log("User data",data);
+  
+}
 }, [data])
 
 useEffect(() => {
@@ -126,8 +133,12 @@ useEffect(() => {
               className="flex items-center p-4 hover:bg-gray-700 cursor-pointer"
             >
               {/* Circle Avatar */}
-              <div className="w-12 h-12 rounded-full bg-gray-600 flex-shrink-0">
-            { user.isOnline &&   <div className="relative left-8 bg-green-500 h-3 w-3 rounded-full "></div>
+              <div className="w-12 h-12 relative rounded-full bg-gray-600 flex-shrink-0">
+                <img className="w-full h-full rounded-full object-cover "  
+               src={user?.profilePicture?user?.profilePicture:userDefaultImage}
+                
+                alt="user image" />
+            { user.isOnline &&   <div className="absolute right-0 top-0 bg-green-500 h-3 w-3 rounded-full "></div>
   }            </div>
               {/* Chat Info */}
               <div className="ml-4 flex-grow border-b border-gray-700 pb-4">

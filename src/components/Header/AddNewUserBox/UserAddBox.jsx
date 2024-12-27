@@ -144,7 +144,7 @@ useEffect(() => {
   return (
     <div>
       <Toaster />
-      <Dialog onOpenChange={() => console.log("hey")}>
+      <Dialog >
         <DialogTrigger onClick={ShowAllUsers}>
           <i class="fa-solid fa-plus"></i>
         </DialogTrigger>

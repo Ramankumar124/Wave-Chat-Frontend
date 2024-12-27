@@ -10,6 +10,9 @@ import { useUser } from "@/context/UserContext";
 import { Toaster ,toast} from "react-hot-toast";
 import Call from "../Call/Call";
 import messageSoundBubble from "../../assets/messageSoundBubble.mp3"
+import userDefaultImage from "@/assets/userDefaultImage.jpeg";
+import ContactProfile from "./ContactProfile";
+
 const socket = io("http://localhost:5000");
 
 const ChatBox = () => {
@@ -187,7 +190,7 @@ useEffect(() => {
       
         if (receivedRoomId === activeRoomId) {
           setChat((prevChat) => [
-            ...prevChat,
+            ...prevChat,  
             {
               content: message,
               image: selectedImage,
@@ -243,6 +246,8 @@ useEffect(() => {
   }, [chat]);
 
   const sendMessage = async () => {
+    console.log("send message");
+    
     if ((message || selectedImage) && contactUserId) {
      
       const currentUserId = data._id;
@@ -265,8 +270,6 @@ useEffect(() => {
         contactUserId,
         reciverFBToken,
         reciverName
-
-
       });
       setMessage("");
     }
@@ -400,13 +403,14 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
         <div><Toaster/></div>
         <div className="flex items-center justify-between  p-4 bg-gray-800">
           <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-lg bg-gray-700">
-              <i className="fas fa-arrow-left"></i>
-            </button>
+             <div  className="w-12 h-12  rounded-full bg-gray-600 flex-shrink-0">
+        <ContactProfile className='relative' contactUserData={contactUserData}/>
+                            
+                 </div>
             <div className="flex flex-col">
               <h2 className="text-lg font-bold">{contactUserData.name}</h2>
-              <span className="text-sm text-gray-400">
-                last seen at 6:46 PM
+              <span className="text-sm text-green-500 h-2 w-7">
+                {ShowTyping && "Typing...."}
               </span>
             </div>
           </div>

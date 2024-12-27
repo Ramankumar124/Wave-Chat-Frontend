@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import api from "@/api";
 import UserAddBox from "./AddNewUserBox/UserAddBox";
 import NotificationPanel from "./NotificationPanel/NotificationPanel";
+import UserProfile from "./UserProfile/UserProfile";
 
 
 const Header = () => {
@@ -161,6 +162,10 @@ const Header = () => {
         <div>
     
         <NotificationPanel/>
+        </div>
+
+        <div>
+          <UserProfile/>
         </div>
         <div >
         <i class="fa-solid fa-arrow-right-from-bracket"></i>
