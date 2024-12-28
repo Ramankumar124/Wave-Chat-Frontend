@@ -58,7 +58,7 @@ useEffect(() => {
     <Sheet>
       <Toaster/>
       <SheetTrigger asChild>
-        <Button className="bg-transparent hover:bg-transparent text-2xl">
+        <Button className="bg-transparent text-base-content border-none  hover:bg-transparent text-2xl">
           <i class="fa-solid fa-user"></i>
         </Button>
       </SheetTrigger>

@@ -7,9 +7,10 @@ import Home from './components/home'
 import { useEffect } from 'react'
 import { onMessage } from 'firebase/messaging'
 import { messaging } from './firebase'
+import { useUser } from './context/UserContext'
 
 function App() {
- 
+const {theme} = useUser();
 useEffect(() => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/firebase-messaging-sw.js')
@@ -35,7 +36,7 @@ useEffect(() => {
   return (
     <>
     <Router>
-      <div className='App'>
+      <div data-theme={theme} className='App'>
         <Routes>
         <Route path='/' element={<Login/>}/>
           <Route path='/login' element={<Login/>}/>

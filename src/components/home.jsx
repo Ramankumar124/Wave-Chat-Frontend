@@ -21,7 +21,12 @@ const Home = () => {
   return (
     <div className='w-screen h-screen'>
     <Header/>
-      <div className='flex w-full h-[95%]'>    <Sidebar  />
+      <div className='flex w-full h-[95%]'>  
+          <Sidebar  />
+         <div className='w-2 h-full '>
+           {/* <div className='w-1 h-full rounded-md bg-primary'></div> */}
+
+          </div>
           <ChatBox />
           </div>
 

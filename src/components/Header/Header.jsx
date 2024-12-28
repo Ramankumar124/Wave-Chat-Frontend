@@ -10,6 +10,7 @@ import api from "@/api";
 import UserAddBox from "./AddNewUserBox/UserAddBox";
 import NotificationPanel from "./NotificationPanel/NotificationPanel";
 import UserProfile from "./UserProfile/UserProfile";
+import SettingsPage from "./settingPanel/SettingPage";
 
 
 const Header = () => {
@@ -120,8 +121,19 @@ const Header = () => {
     }
   };
 
+  
+  const handleLogout = async () => {
+    console.log("hello");
+    try {
+        const response = await api.get('/auth/logout'); 
+        location.reload(); 
+        Cookies.remove('token'); 
+    } catch (error) {
+        console.log("Error during logout:", error);
+    }
+}
   return (
-    <div className="bg-slate-500 w-full h-[5%] text-white text-3xl flex justify-between items-center">
+    <div className="  w-full h-[5%] bg-base-200  text-3xl flex justify-between items-center">
       {notification.length}
       <div>
         <Toaster />
@@ -159,6 +171,11 @@ const Header = () => {
         <div>
            <UserAddBox/>
         </div>
+        <div className="" >
+           
+
+          <SettingsPage />
+        </div>
         <div>
     
         <NotificationPanel/>
@@ -168,7 +185,9 @@ const Header = () => {
           <UserProfile/>
         </div>
         <div >
-        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+       <button onClick={handleLogout}>
+       <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </button>
         
         </div>
       </div>

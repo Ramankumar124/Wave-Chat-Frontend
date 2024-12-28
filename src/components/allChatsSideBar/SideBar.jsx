@@ -73,50 +73,23 @@ useEffect(() => {
 }, [newSocket,data]);
 
 
-  const handleLogout = async () => {
-    console.log("hello");
-    try {
-        const response = await api.get('/auth/logout'); 
-        location.reload(); 
-        Cookies.remove('token'); 
-    } catch (error) {
-        console.log("Error during logout:", error);
-    }
-}
 
   return (
-    <div className="w-1/3 h-full bg-gray-900 flex border-gray-500 border-r-2 text-white">
+    <div className="w-1/3 h-full  flex border-gray-500 bg-base-300 ">
       
       <div id="mainChat" className="w-full h-full flex flex-col items">
         <div
           id="topBar"
-          className=" p-3 px-8 text-white flex justify-between text-2xl font-bold "
+          className=" p-3 px-8  flex justify-between text-2xl font-bold "
         >
           <p>Chats</p>
           <div className="flex gap-4">
            
-          <DropdownMenu>
-  <DropdownMenuTrigger>  <i class="fa-solid fa-ellipsis-vertical w-4"></i></DropdownMenuTrigger>
-  <DropdownMenuContent className="bg-slate-400 ">
-    <DropdownMenuLabel >My Account</DropdownMenuLabel>
-    <DropdownMenuSeparator />
-    <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-    <DropdownMenuItem>Billing</DropdownMenuItem>
-    <DropdownMenuItem>Team</DropdownMenuItem>
-    <DropdownMenuItem>Subscription</DropdownMenuItem>
-  </DropdownMenuContent>
-</DropdownMenu>
+          
 
           </div>
         </div>
-        <div className="bg-gray-700 mr-10 px-3 h-8 gap-8 w-full rounded-md flex items-center ">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input
-            className="bg-gray-700 rounded-lg h-full "
-            type="text"
-            placeholder="Seach"
-          />
-        </div>
+        
 
         <div className="flex-grow overflow-y-auto">
           {Contacts.map((user) => (
@@ -130,11 +103,11 @@ useEffect(() => {
                   contactUserData: {...prev.contactUserData,...user}
                 }))
               }
-              className="flex items-center p-4 hover:bg-gray-700 cursor-pointer"
+              className="flex items-center p-4  cursor-pointer"
             >
               {/* Circle Avatar */}
-              <div className="w-12 h-12 relative rounded-full bg-gray-600 flex-shrink-0">
-                <img className="w-full h-full rounded-full object-cover "  
+              <div className="w-14 h-14 relative rounded-full flex-shrink-0  items-center justify-center mb-2">
+                <img className="w-full h-full rounded-full object-cover  "  
                src={user?.profilePicture?user?.profilePicture:userDefaultImage}
                 
                 alt="user image" />
@@ -143,10 +116,14 @@ useEffect(() => {
               {/* Chat Info */}
               <div className="ml-4 flex-grow border-b border-gray-700 pb-4">
                 <div className="flex justify-between">
-                  <h2 className="font-semibold text-white">{user.name}</h2>
-                  <span className="text-sm text-gray-400">6:45 PM</span>
+         
+                  <div>
+                  <h2 className="font-semibold text-xl">{user.name}</h2>
+                  <p className="text-zinc-500 text-lg">{user.isOnline?"Online":"Offline" } </p>
+                  </div>
+                  {/* <span className="text-sm ">6:45 PM</span> */}
                 </div>
-                <p className="text-gray-400"></p>
+                <p className=""></p>
               </div>
             </div>
           ))}

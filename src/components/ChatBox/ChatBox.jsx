@@ -398,12 +398,12 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
         </div>
       )}
 
-      <div className="flex flex-col w-2/3 h-full bg-gray-900 text-white ">
+      <div className="flex flex-col w-2/3 h-full bg-base-200   ">
         {/* Top NavBar */}
         <div><Toaster/></div>
-        <div className="flex items-center justify-between  p-4 bg-gray-800">
+        <div className="flex items-center justify-between  p-4 ">
           <div className="flex items-center space-x-4">
-             <div  className="w-12 h-12  rounded-full bg-gray-600 flex-shrink-0">
+             <div  className="w-12 h-12  rounded-full  flex-shrink-0">
         <ContactProfile className='relative' contactUserData={contactUserData}/>
                             
                  </div>
@@ -417,10 +417,10 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
 
           {/* Search bar and 3-dot menu */}
           <div className="flex items-center space-x-4">
-            <button onClick={handleStartCall} className="p-2 rounded-lg bg-gray-700">
+            <button onClick={handleStartCall} className="p-2 rounded-lg ">
             <i class="fa-solid fa-video"></i>
                         </button>
-            <button className="p-2 rounded-lg bg-gray-700">
+            <button className="p-2 rounded-lg ">
               <i className="fas fa-ellipsis-v"></i>
             </button>
           </div>
@@ -430,7 +430,7 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
         <div
         // ref={chatBoxRef} 
           id="chatBox"
-          className="flex-grow p-4   bg-gray-900 overflow-y-auto"
+          className="flex-grow p-4 bg-base-100 overflow-y-auto"
         >
            {/* chats here  */}
           <Chat  chat={chat} contactUserId={contactUserId}/>
@@ -439,11 +439,11 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
 
         {/* Bottom Input Section */}
 
-        <div className="flex items-center p-4 bg-gray-800">
+        <div className="flex items-center p-4 bg-base-300 rounded-sm  border-base-300  border-t-2">
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setShowEmojiPicker(!ShowEmojiPicker)}
-              className="p-2 text-gray-400 hover:text-white"
+              className="p-2 text-primary "
             >
              {!ShowEmojiPicker ? <i className="far fa-smile text-3xl"></i>: <i class="fa-solid fa-xmark text-3xl "></i>}</button>
             {ShowEmojiPicker && (
@@ -452,10 +452,10 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
                 <EmojiPicker theme="dark" width={700} onEmojiClick={onEmojiClick} />
               </div>
             )}
-            <button className="p-2 text-gray-400 hover:text-white">
-              <div className="flex items-center justify-center">
+            <button className="p-2 ">
+              <div className="flex items-center text-primary justify-center">
                 <label className="cursor-pointer">
-                  <i className="fas fa-camera text-3xl text-gray-500 hover:text-blue-500"></i>
+                  <i className="fas fa-camera text-3xl "></i>
                   <input
                     type="file"
                     className="hidden"
@@ -476,11 +476,11 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
             }}
             onKeyDown={handleKeyDown}
             placeholder="Type a message"
-            className="flex-grow bg-gray-700 text-white rounded-lg px-4 py-2 mx-4 focus:outline-none h-auto"
+            className="flex-grow bg-base-200  input input-bordered text-base-content rounded-lg px-4 py-2 mx-4 focus:outline-none h-auto"
           />
           <button
             onClick={sendMessage}
-            className="bg-green-500 p-3 rounded-full hover:bg-green-600"
+            className="bg-primary p-3 rounded-full text-base-300 "
           >
             <i className="fas fa-paper-plane"></i>
           </button>

@@ -14,6 +14,8 @@ export const UserProvider = ({ children }) => {
   const [toggleCallBox, setToggleCallBox] = useState(false);
   const [stream, setstream] = useState();
   const [isCallActive, setIsCallActive] = useState(false);
+const [theme, setTheme] = useState("light");
+
   const setUserData = (user) => {
     setdata(user);
   };
@@ -34,7 +36,9 @@ export const UserProvider = ({ children }) => {
         stream,
         setstream,
         isCallActive, 
-        setIsCallActive
+        setIsCallActive,
+        theme,
+        setTheme
       }}
     >
       {children}

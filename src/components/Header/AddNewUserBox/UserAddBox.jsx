@@ -151,7 +151,7 @@ useEffect(() => {
         <VisuallyHidden>
           <DialogTitle>Hidden Dialog Title</DialogTitle>
         </VisuallyHidden>
-        <DialogContent className="w-[400px] h-[600px] flex flex-col items-center">
+        <DialogContent className="w-[400px] h-[600px] flex flex-col items-center bg-base-200 text-base-content">
           <h1>Find People</h1>
 
           <Input onChange={(e)=>handleInputSearch(e)}   type="text" placeholder="Find and add someone"  />

@@ -25,10 +25,10 @@ const Chat = ({chat,contactUserId}) => {
           >
             {/* {msg.image ? <img src={msg.image} alt="Shared" className="w-auto h-[300px]" /> : null} */}
             <div
-              className={`m-5 p-1  relative text-xl text-white h-auto min-h-12 min-w-20 max-w-[400px] ${
+              className={`m-5 p-1  relative text-xl  h-auto min-h-12 min-w-20 max-w-[400px] shadow-sm ${
                 msg.sender === contactUserId
-                  ? "bg-[#474545]"
-                  : "bg-[#2d7d4a]"
+                  ? "bg-base-300 text-base-content"
+                  : "bg-primary text-primary-content"
               } rounded-lg`}
             >
               {msg.image ? (
@@ -45,7 +45,13 @@ const Chat = ({chat,contactUserId}) => {
               ) : (
                 <div className="px-3">{msg.content}</div>
               )}
-              <div className="w-full text-xs flex  items-end justify-end absolute text-gray-200 right-2 bottom-0">
+              <div className={`w-full text-xs flex  items-end justify-end absolute 
+                ${
+                msg.sender === contactUserId
+                  ? "text-base-content/70"
+                  : "text-primary-content/70"
+              }
+                right-2 bottom-0`}>
                 {time}
               </div>
             </div>
