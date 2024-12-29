@@ -19,6 +19,13 @@ useEffect(() => {
   
 }, [theme])
 
+const handleChangeTheme = (newTheme) => {
+setTheme(newTheme);
+localStorage.setItem('theme', newTheme);
+}
+
+
+
   return (
     <div>
       <button onClick={()=>settoggleSetting(!toggleSetting)} ><i class="fa-solid fa-gear"></i></button>
@@ -42,7 +49,7 @@ useEffect(() => {
                 group flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors
                 ${theme === t ? "bg-base-200" : "hover:bg-base-200/50"}
               `}
-              onClick={() => setTheme(t)}
+              onClick={()=>handleChangeTheme(t)}
             >
               <div className="relative h-8 w-full rounded-md overflow-hidden" 
               data-theme={t}

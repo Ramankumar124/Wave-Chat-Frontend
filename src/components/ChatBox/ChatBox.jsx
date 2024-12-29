@@ -12,6 +12,7 @@ import Call from "../Call/Call";
 import messageSoundBubble from "../../assets/messageSoundBubble.mp3"
 import userDefaultImage from "@/assets/userDefaultImage.jpeg";
 import ContactProfile from "./ContactProfile";
+import WebsiteLogo from "../../assets/website logo.png";
 
 const socket = io("http://localhost:5000");
 
@@ -279,8 +280,12 @@ useEffect(() => {
 
     return (
       <div className="w-2/3 h-auto flex justify-center items-center text-black text-8xl">
-        Select a chat to start messaging
-      </div>
+       <div className="items-center justify-center flex flex-col text-base-content gap-3">
+          <img className="w-60 " src={WebsiteLogo} alt="website logo" />
+          <h2 className="text-4xl font-bold ">Welcome To WaveChat!</h2>
+          <p className="text-lg">Select a conversation from the sidebar to start hatting</p>
+          </div>
+       </div>
     );
   }
   const handleKeyDown = (event) => {

@@ -12,19 +12,17 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import api from "@/api";
 import { useUser } from "@/context/UserContext";
 import toast, { Toaster } from "react-hot-toast";
+import userDefaultImage from "@/assets/userDefaultImage.jpeg";
 
 const UserAddBox = () => {
   const [users, setusers] = useState([]);
   const [Filteredusers, setFilteredusers] = useState([]);
 
-  const { data,setUserData, newSocket } = useUser();
-  
-  
-  
- 
+  const { data, setUserData, newSocket } = useUser();
+
   const ShowAllUsers = async () => {
     console.log(data);
-    
+
     try {
       const response = await api.get("/get-all-users");
       console.log("all user list Data is ", response);
@@ -69,82 +67,86 @@ const UserAddBox = () => {
     );
     setFilteredusers(newFilteredUsers); // Update the filtered list
   }
-  
-useEffect(() => {
 
-  if (newSocket) {
-    newSocket.on("IncomingfriendRequest", (sender,reciver) => {
-      console.log(reciver);
-      
-      // alert(`${sender?.name} sended u friend request`);
-      toast.custom((t) => (
-        <div
-          className={`${
-            t.visible ? "animate-enter" : "animate-leave"
-          } max-w-md w-full bg-white shadow-lg rounded-full pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-        >
-          <div className="flex-1 w-0 p-4 flex items-center">
-            <div className="flex-shrink-0">
-              <img
-                className="h-12 w-12 rounded-full"
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixqx=6GHAjsWpt9&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
-                alt="User avatar"
-              />
-            </div>
-            <div className="ml-3 flex-1">
-              <p className="text-sm font-semibold text-gray-900">
-                {sender.name}
-              </p>
-              <p className="mt-1 text-sm text-gray-500">
-                wants to be your friend
-              </p>
-            </div>
-          </div>
-          <div className="flex space-x-2 pr-4 items-center justify-normal">
-            <button
-              onClick={() => {
-                // Handle accept logic
+  useEffect(() => {
+    if (newSocket) {
+      newSocket.on("IncomingfriendRequest", (sender, reciver) => {
+ console.log("friend Request sender",sender);
+ 
+        // console.log(reciver);
 
-                toast.dismiss(t.id);
-                newSocket.emit('freindRequestAccepted',sender,reciver);
-              }}
-              className="bg-indigo-600 text-white w-fit h-fit p-2  rounded-lg  text-sm hover:bg-indigo-500 focus:outline-none"
+        // alert(`${sender?.name} sended u friend request`);
+        toast.custom(
+          (t) => (
+            <div
+              className={`${
+                t.visible ? "animate-enter" : "animate-leave"
+              } max-w-md w-full bg-white shadow-lg rounded-full pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
             >
-              Accept
-            </button>
-            <button
-              onClick={() => {
-                // Handle decline logic
-                toast.dismiss(t.id);
-              }}
-              className="bg-red-600 text-white w-fit h-fit p-2  rounded-lg   text-sm hover:bg-red-500 focus:outline-none"
-            >
-              Decline
-            </button>
-          </div>
-        </div>
-      ),{duration:Infinity});
-    });
+              <div className="flex-1 w-0 p-4 flex items-center">
+                <div className="flex-shrink-0">
+                  <img
+                    className="h-12 w-12 rounded-full"
+                    src={sender.profilePicture}
+                    alt="User avatar"
+                  />
+                </div>
+                <div className="ml-3 flex-1">
+                  <p className="text-sm font-semibold text-gray-900">
+                    {sender.name}
+                  </p>
+                  <p className="mt-1 text-sm text-gray-500">
+                    wants to be your friend
+                  </p>
+                </div>
+              </div>
+              <div className="flex space-x-2 pr-4 items-center justify-normal">
+                <button
+                  onClick={() => {
+                    // Handle accept logic
 
-    newSocket.on("FriendRequestSended",(updatedUser)=>{
-      setUserData(updatedUser)
-      console.log("updatedUser",updatedUser);
+                    toast.dismiss(t.id);
+                    newSocket.emit("freindRequestAccepted", sender, reciver);
+                  }}
+                  className="bg-indigo-600 text-white w-fit h-fit p-2  rounded-lg  text-sm hover:bg-indigo-500 focus:outline-none"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => {
+                    // Handle decline logic
+                    newSocket.emit("friendRequestDeclined", sender, reciver);
+                    console.log("Declined", sender, reciver);
+                    
+                    toast.dismiss(t.id);
+                  }}
+                  className="bg-red-600 text-white w-fit h-fit p-2  rounded-lg   text-sm hover:bg-red-500 focus:outline-none"
+                >
+                  Decline
+                </button>
+              </div>
+            </div>
+          ),
+          { duration: Infinity }
+        );
+      });
 
-    })
+      newSocket.on("FriendRequestSended", (updatedUser) => {
+        setUserData(updatedUser);
+        console.log("updatedUser", updatedUser);
+      });
 
-    newSocket.on('AcceptedFriendRequest',(updatedUserData)=>{
-      setUserData(updatedUserData);
-      ShowAllUsers();
-    })
-  }
-
-}, [newSocket])
-
+      newSocket.on("AcceptedFriendRequest", (updatedUserData) => {
+        setUserData(updatedUserData);
+        ShowAllUsers();
+      });
+    }
+  }, [newSocket]);
 
   return (
     <div>
       <Toaster />
-      <Dialog >
+      <Dialog>
         <DialogTrigger onClick={ShowAllUsers}>
           <i class="fa-solid fa-plus"></i>
         </DialogTrigger>
@@ -154,38 +156,51 @@ useEffect(() => {
         <DialogContent className="w-[400px] h-[600px] flex flex-col items-center bg-base-200 text-base-content">
           <h1>Find People</h1>
 
-          <Input onChange={(e)=>handleInputSearch(e)}   type="text" placeholder="Find and add someone"  />
+          <Input
+            onChange={(e) => handleInputSearch(e)}
+            type="text"
+            placeholder="Find and add someone"
+          />
           <div className="All Users List flex flex-col py-2 w-full px-8 overflow-visible">
-  {Filteredusers.length > 0 ? (
-    Filteredusers.map((user) => {
-      const isPending = data.friendRequest.sent.some(
-        (sentUser) => sentUser.email === user.email
-      );
+            {Filteredusers.length > 0 ? (
+              Filteredusers.map((user) => {
+                const isPending = data.friendRequest.sent.some(
+                  (sentUser) => sentUser.email === user.email
+                );
 
-      return (
-        <div
-          className="w-full h-10 flex items-center justify-between"
-          key={user._id}
-        >
-          <div className="user-image bg-gray-400 w-8 h-8 rounded-full"></div>
-          <p className="text-xl font-light">{user.name}</p>
-          <button
-            onClick={() => sendFriendRequest(user)}
-            disabled={isPending}
-            className={`h-7 w-24 text-white rounded-full text-md font-bold py-1 flex items-center justify-center ${
-              isPending ? "bg-red-600" : "bg-blue-600"
-            }`}
-          >
-            {isPending ? "Pending" : "Add"}
-          </button>
-        </div>
-      );
-    })
-  ) : (
-    <p className="text-center text-gray-500">No users found</p>
-  )}
-</div>
-
+                return (
+                  <div
+                    className="w-full h-10 flex items-center justify-between"
+                    key={user._id}
+                  >
+                    <div className="user-image bg-gray-400 w-8 h-8 rounded-full">
+                      <img
+                        className="w-full h-full rounded-full object-cover  "
+                        src={
+                          user?.profilePicture
+                            ? user?.profilePicture
+                            : userDefaultImage
+                        }
+                        alt="user image"
+                      />
+                    </div>
+                    <p className="text-xl font-light">{user.name}</p>
+                    <button
+                      onClick={() => sendFriendRequest(user)}
+                      disabled={isPending}
+                      className={`h-7 w-24 text-white rounded-full text-md font-bold py-1 flex items-center justify-center ${
+                        isPending ? "bg-red-600" : "bg-blue-600"
+                      }`}
+                    >
+                      {isPending ? "Pending" : "Add"}
+                    </button>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-center text-gray-500">No users found</p>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

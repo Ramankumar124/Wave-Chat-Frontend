@@ -11,7 +11,7 @@ import UserAddBox from "./AddNewUserBox/UserAddBox";
 import NotificationPanel from "./NotificationPanel/NotificationPanel";
 import UserProfile from "./UserProfile/UserProfile";
 import SettingsPage from "./settingPanel/SettingPage";
-
+import WebsiteLogo from "../../assets/website logo.png";
 
 const Header = () => {
   async function requestPermission() {
@@ -133,8 +133,9 @@ const Header = () => {
     }
 }
   return (
-    <div className="  w-full h-[5%] bg-base-200  text-3xl flex justify-between items-center">
-      {notification.length}
+    <div className="  w-full h-auto bg-base-200  text-3xl flex justify-between items-center">
+  
+      <img className=" h-16" src={WebsiteLogo} alt="" />
       <div>
         <Toaster />
       </div>

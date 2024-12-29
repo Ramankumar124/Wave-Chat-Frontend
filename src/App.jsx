@@ -10,7 +10,7 @@ import { messaging } from './firebase'
 import { useUser } from './context/UserContext'
 
 function App() {
-const {theme} = useUser();
+const {theme,setTheme} = useUser();
 useEffect(() => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/firebase-messaging-sw.js')
@@ -32,6 +32,12 @@ useEffect(() => {
   });
 }, []);
 
+useEffect(() => {
+  const localTheme = localStorage.getItem('theme');
+  if (localTheme) {
+    setTheme(localTheme);
+  }
+}, [])
 
   return (
     <>
