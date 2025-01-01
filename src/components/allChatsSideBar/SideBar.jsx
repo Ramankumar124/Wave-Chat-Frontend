@@ -75,14 +75,14 @@ useEffect(() => {
 
 
   return (
-    <div className="w-1/3 h-full  flex border-gray-500 bg-base-300 ">
+    <div className="lg:w-1/3 h-full w-[20%] flex border-gray-500 bg-base-300   ">
       
       <div id="mainChat" className="w-full h-full flex flex-col items">
         <div
           id="topBar"
-          className=" p-3 px-8  flex justify-between text-2xl font-bold "
+          className=" lg:p-3 lg:px-8  flex justify-between text-2xl font-bold "
         >
-          <p>Chats</p>
+          <p className="lg:text-lg text-sm p-2 ml-3 ">Chats</p>
           <div className="flex gap-4">
            
           
@@ -106,15 +106,17 @@ useEffect(() => {
               className="flex items-center p-4  cursor-pointer"
             >
               {/* Circle Avatar */}
-              <div className="w-14 h-14 relative rounded-full flex-shrink-0  items-center justify-center mb-2">
+              <div className="lg:w-14 lg:h-14 w-12 h-12 relative rounded-full flex-shrink-0  items-center justify-center mb-2">
                 <img className="w-full h-full rounded-full object-cover  "  
                src={user?.profilePicture?user?.profilePicture:userDefaultImage}
                 
                 alt="user image" />
             { user.isOnline &&   <div className="absolute right-0 top-0 bg-green-500 h-3 w-3 rounded-full "></div>
-  }            </div>
+          
+  }            <div className="text-xs  text-center md:hidden">{user.name}</div>
+   </div>
               {/* Chat Info */}
-              <div className="ml-4 flex-grow border-b border-gray-700 pb-4">
+              <div className="ml-4 flex-grow border-b border-gray-700 pb-4 md:block hidden">
                 <div className="flex justify-between">
          
                   <div>

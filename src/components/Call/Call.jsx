@@ -101,16 +101,17 @@ const Call = ({ socket, contactUserId }) => {
   });
   return (
     <Resizable>
-    <Draggable>
+    {/* <Draggable> */}
      
-      <div className="z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] flex bg-gray-600 ">
+      <div className="z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[60%] md:w-[800px] md:h-[800px] flex bg-gray-600 ">
         <Toaster />
         <div className="relative w-full h-full">
-          <div className="absolute bottom-0 right-0 w-[250px] h-[250px]  flex  items-center justify-center rounded-lg ">
+          <div className="absolute bottom-0 right-0 w-[150px] h-[150px] md:w-[250px] md:h-[250px]  flex  items-center justify-center rounded-lg ">
             <video
-              className="flex object-cover border-2 border-green-500"
+              className="flex object-cover border-2   border-green-500 md:w-[250px] md:h-[250px] "
               ref={vedioRef}
-              style={{ width: "250px", height: "250px", borderRadius: "50px" }}
+              style={{  borderRadius: "50px" }}
+            
               autoPlay
             ></video>
           </div>
@@ -121,9 +122,9 @@ const Call = ({ socket, contactUserId }) => {
               style={{ width: "100%", height: "100%" }}
            
               autoPlay
-            ></video>
+            ></video> 
           </div>
-          <div className="absolute bottom-9 right-1/2">
+          <div className="absolute bottom-9 right-1/2 ml-9">
             <button
               onClick={EndCall}
               className="bg-red-500 p-3 rounded-full hover:scale-110 rotate-45  animate-in"
@@ -132,13 +133,13 @@ const Call = ({ socket, contactUserId }) => {
             </button>
           </div>
 
-          <div className="absolute top-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2  text-white">
+          <div className="absolute top-1/2 right-1/2 lg-translate-x-1/2 -translate-y-1/2  text-white">
             {callEnded && <p> Call Is Ended Now </p>}
           </div>
-          <div className="absolute bottom-9 left-[30%]  ">
+          <div className="absolute bottom-9 left-[10%] md:left-[30%]  ">
               <button
                 onClick={toggleMute}
-                className={`p-2 rounded-full w-10 h-10 bg-green-500 hover:bg-opacity-80`}
+                className={`p-2 rounded-full w-10 h-10 bg-green-500 hover:bg-opacity-80 text-white`}
               >
                 {isMuted ? 
                 <i class="fa-solid fa-microphone-slash"></i>
@@ -147,7 +148,7 @@ const Call = ({ socket, contactUserId }) => {
             </div>
         </div>
       </div>
-    </Draggable>
+    {/* </Draggable>z` */}
       </Resizable>
   );
 };

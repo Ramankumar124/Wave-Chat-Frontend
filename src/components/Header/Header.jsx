@@ -168,7 +168,7 @@ const Header = () => {
         </div>
       )}
       <audio ref={audioPlayer} src={NotificationSound}></audio>
-      <div className=" flex mr-7 gap-5">
+      <div className=" flex mr-2 md:mr-7 gap-3 md:gap-5">
         <div>
            <UserAddBox/>
         </div>
@@ -187,7 +187,7 @@ const Header = () => {
         </div>
         <div >
        <button onClick={handleLogout}>
-       <i class="fa-solid fa-arrow-right-from-bracket"></i>
+       <i class="fa-solid fa-arrow-right-from-bracket text-xl md:text-3xl"></i>
         </button>
         
         </div>

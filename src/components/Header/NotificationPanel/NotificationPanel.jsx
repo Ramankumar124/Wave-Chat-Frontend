@@ -52,13 +52,13 @@ const NotificationPanel = () => {
     <div className="relative">
       {/* Notification Bell Icon */}
       <div
-        className="cursor-pointer text-xl"
+        className="cursor-pointer "
         onClick={() => setIsOpen(!isOpen)}
       >
-        <i className="text-3xl fa-solid fa-bell"></i>
+        <i className=" fa-solid fa-bell text-xl md:text-3xl"></i>
         {/* Notification Count */}
-        <span className="absolute top-0 left-3 bg-red-500 text-white text-xs w-5 h-5 font-bold flex items-center justify-center rounded-full">
-          {notification.length}
+        <span className="absolute  top-1  left-2 md:top-0 md:left-3 bg-red-500 text-white h-4 w-4 text-[10px] md:w-5 md:h-5 font-bold flex items-center justify-center rounded-full">
+          {notification?.length}
         </span>
       </div>
 

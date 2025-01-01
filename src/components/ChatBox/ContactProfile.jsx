@@ -16,7 +16,7 @@ const ContactProfile = ({contactUserData}) => {
       <Dialog>
         <DialogTrigger  >
           <img
-            className="w-12 h-12 rounded-full object-cover "
+            className="md:w-12 md:h-12  w-8 h-8 rounded-full object-cover "
             src={
               contactUserData?.profilePicture
                 ? contactUserData?.profilePicture
@@ -29,7 +29,7 @@ const ContactProfile = ({contactUserData}) => {
         <VisuallyHidden>
           <DialogTitle>Hidden Dialog Title</DialogTitle>
         </VisuallyHidden>
-        <DialogContent className=" absolute z-10 p-3 w-[500px] h-[700px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center bg-[#222222] text-white gap-3" >
+        <DialogContent className=" absolute z-10 p-3  w-80 h-auto md:w-[500px] md:h-[700px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center bg-[#222222] text-base-content gap-3" >
         
         <div className="absolute right-4 top-4"><DialogClose>
         <i class="fa-solid fa-xmark"></i>
@@ -37,7 +37,7 @@ const ContactProfile = ({contactUserData}) => {
           </DialogClose></div>
          <div
                   id="userImage"
-                  className=" h-60 w-60 rounded-full border-4 border-white  mt-11 relative"
+                  className=" md:h-60 md:w-60 h-40 w-40 rounded-full border-4 border-white  mt-11 relative"
                 >
                   <img
                     className="w-full h-full rounded-full object-cover"

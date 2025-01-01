@@ -148,12 +148,12 @@ const UserAddBox = () => {
       <Toaster />
       <Dialog>
         <DialogTrigger onClick={ShowAllUsers}>
-          <i class="fa-solid fa-plus"></i>
+          <i class="fa-solid fa-plus md:text-4xl text-xl"></i>
         </DialogTrigger>
         <VisuallyHidden>
           <DialogTitle>Hidden Dialog Title</DialogTitle>
         </VisuallyHidden>
-        <DialogContent className="w-[400px] h-[600px] flex flex-col items-center bg-base-200 text-base-content">
+        <DialogContent className="md:w-[400px] md:h-[600px] w-[80%] h-auto max-h-[300px] flex flex-col items-center bg-base-200 text-base-content">
           <h1>Find People</h1>
 
           <Input
@@ -161,7 +161,7 @@ const UserAddBox = () => {
             type="text"
             placeholder="Find and add someone"
           />
-          <div className="All Users List flex flex-col py-2 w-full px-8 overflow-visible">
+          <div className="All Users List flex flex-col py-2 w-[80%]  md:w-full  md:px-8 p-2 overflow-visible">
             {Filteredusers.length > 0 ? (
               Filteredusers.map((user) => {
                 const isPending = data.friendRequest.sent.some(
@@ -170,7 +170,7 @@ const UserAddBox = () => {
 
                 return (
                   <div
-                    className="w-full h-10 flex items-center justify-between"
+                    className="w-full h-10 flex items-center justify-between gap-2"
                     key={user._id}
                   >
                     <div className="user-image bg-gray-400 w-8 h-8 rounded-full">
@@ -184,11 +184,11 @@ const UserAddBox = () => {
                         alt="user image"
                       />
                     </div>
-                    <p className="text-xl font-light">{user.name}</p>
+                    <p className="md:text-xl text-sm font-light">{user.name}</p>
                     <button
                       onClick={() => sendFriendRequest(user)}
                       disabled={isPending}
-                      className={`h-7 w-24 text-white rounded-full text-md font-bold py-1 flex items-center justify-center ${
+                      className={`md:h-7 md:w-24 p-1 text-xs text-white rounded-full md:text-md font-bold py-1 flex items-center justify-center ${
                         isPending ? "bg-red-600" : "bg-blue-600"
                       }`}
                     >

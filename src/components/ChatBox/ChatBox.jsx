@@ -13,6 +13,7 @@ import messageSoundBubble from "../../assets/messageSoundBubble.mp3"
 import userDefaultImage from "@/assets/userDefaultImage.jpeg";
 import ContactProfile from "./ContactProfile";
 import WebsiteLogo from "../../assets/website logo.png";
+import VoiceCall from "../Call/VoiceCall";
 
 const socket = io("http://localhost:5000");
 
@@ -279,11 +280,11 @@ useEffect(() => {
   if (!openChat.isOpen) {
 
     return (
-      <div className="w-2/3 h-auto flex justify-center items-center text-black text-8xl">
+      <div className="w-[80%] h-auto flex justify-center items-center text-black text-8xl">
        <div className="items-center justify-center flex flex-col text-base-content gap-3">
-          <img className="w-60 " src={WebsiteLogo} alt="website logo" />
-          <h2 className="text-4xl font-bold ">Welcome To WaveChat!</h2>
-          <p className="text-lg">Select a conversation from the sidebar to start hatting</p>
+          <img className="md:w-60  w-40" src={WebsiteLogo} alt="website logo" />
+          <h2 className="md:text-4xl text-2xl font-bold ">Welcome To WaveChat!</h2>
+          <p className="md:text-lg text-sm text-center">Select a conversation from the sidebar to start hatting</p>
           </div>
        </div>
     );
@@ -367,15 +368,15 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
             rounded-2xl bg-gray-700"
           >
             {selectedImage && (
-              <div className=" w-full h-full px-16">
+              <div className=" w-full h-full min-w-80 md:px-16 px-4">
                 <div className="flex my-5 items-center justify-start gap-6 ">
                   <button
                     onClick={removeImage}
-                    className="  text-gray-300  text-6xl  w-6 h-6 flex items-center justify-center"
+                    className="  text-gray-300  md:text-6xl text-2xl w-6 h-6 flex items-center justify-center"
                   >
                     &times;
                   </button>
-                  <h2 className="text-white text-3xl font-bold">Send Image</h2>
+                  <h2 className="text-base-content md:text-3xl t font-bold">Send Image</h2>
                 </div>
                 <img
                   src={selectedImage}
@@ -403,31 +404,29 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
         </div>
       )}
 
-      <div className="flex flex-col w-2/3 h-full bg-base-200   ">
+      <div className="flex flex-col w-[80%] lg:w-2/3 h-full bg-base-200   ">
         {/* Top NavBar */}
         <div><Toaster/></div>
         <div className="flex items-center justify-between  p-4 ">
           <div className="flex items-center space-x-4">
-             <div  className="w-12 h-12  rounded-full  flex-shrink-0">
+             <div  className="md:w-12 md:h-12 w-8 h-8  rounded-full  flex-shrink-0">
         <ContactProfile className='relative' contactUserData={contactUserData}/>
                             
                  </div>
             <div className="flex flex-col">
-              <h2 className="text-lg font-bold">{contactUserData.name}</h2>
+              <h2 className="md:text-lg text-sm font-bold">{contactUserData.name}</h2>
               <span className="text-sm text-green-500 h-2 w-7">
                 {ShowTyping && "Typing...."}
               </span>
             </div>
           </div>
 
-          {/* Search bar and 3-dot menu */}
           <div className="flex items-center space-x-4">
             <button onClick={handleStartCall} className="p-2 rounded-lg ">
             <i class="fa-solid fa-video"></i>
                         </button>
-            <button className="p-2 rounded-lg ">
-              <i className="fas fa-ellipsis-v"></i>
-            </button>
+           
+            {/* <VoiceCall socket={socket} contactUserId={contactUserId} /> */}
           </div>
         </div>
 
@@ -435,7 +434,7 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
         <div
         // ref={chatBoxRef} 
           id="chatBox"
-          className="flex-grow p-4 bg-base-100 overflow-y-auto"
+          className="flex-grow md:p-4  bg-base-100 overflow-y-auto"
         >
            {/* chats here  */}
           <Chat  chat={chat} contactUserId={contactUserId}/>
@@ -445,22 +444,22 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
         {/* Bottom Input Section */}
 
         <div className="flex items-center p-4 bg-base-300 rounded-sm  border-base-300  border-t-2">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center lg:space-x-4">
             <button
               onClick={() => setShowEmojiPicker(!ShowEmojiPicker)}
               className="p-2 text-primary "
             >
-             {!ShowEmojiPicker ? <i className="far fa-smile text-3xl"></i>: <i class="fa-solid fa-xmark text-3xl "></i>}</button>
+             {!ShowEmojiPicker ? <i className="far fa-smile lg:text-3xl text-xl"></i>: <i class="fa-solid fa-xmark text-3xl "></i>}</button>
             {ShowEmojiPicker && (
               <div  className="absolute top-1/2   left-1/2 -translate-x-1/2 -translate-y-1/2">
                 
-                <EmojiPicker theme="dark" width={700} onEmojiClick={onEmojiClick} />
+                <EmojiPicker theme="dark"  onEmojiClick={onEmojiClick} />
               </div>
             )}
-            <button className="p-2 ">
+            <button className="lg:p-2 p-1 ">
               <div className="flex items-center text-primary justify-center">
                 <label className="cursor-pointer">
-                  <i className="fas fa-camera text-3xl "></i>
+                  <i className="fas fa-camera lg:text-3xl text-xl "></i>
                   <input
                     type="file"
                     className="hidden"
@@ -481,11 +480,11 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
             }}
             onKeyDown={handleKeyDown}
             placeholder="Type a message"
-            className="flex-grow bg-base-200  input input-bordered text-base-content rounded-lg px-4 py-2 mx-4 focus:outline-none h-auto"
+            className="flex-grow bg-base-200  input input-bordered text-base-content rounded-lg lg:px-4 lg:py-2 mx-4 focus:outline-none h-auto w-40"
           />
           <button
             onClick={sendMessage}
-            className="bg-primary p-3 rounded-full text-base-300 "
+            className="bg-primary lg:p-3 rounded-full text-base-300  text-sm  lg:text-lg p-1 "
           >
             <i className="fas fa-paper-plane"></i>
           </button>

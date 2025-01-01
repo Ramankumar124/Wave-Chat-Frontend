@@ -2,3 +2,21 @@
     fill: currentColor;
   }
   
+  .login-container{
+    background-image: url('./assets/bg.png');
+   
+    background-position: center;
+
+    
+  }
+  input:-webkit-autofill {
+    -webkit-text-fill-color: black; /* Ensure autofill text is black */
+    background-color: white !important; 
+    transition: background-color 5000s ease-in-out 0s; /* Prevent flashing */
+  }
+
+  /* Optional: Apply the same for Firefox */
+  input:-moz-autofill {
+    color: black; /* Set autofill text color */
+    background-color: white !important;
+  }

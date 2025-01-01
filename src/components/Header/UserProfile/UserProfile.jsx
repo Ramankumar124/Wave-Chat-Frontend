@@ -58,8 +58,8 @@ useEffect(() => {
     <Sheet>
       <Toaster/>
       <SheetTrigger asChild>
-        <Button className="bg-transparent text-base-content border-none  hover:bg-transparent text-2xl">
-          <i class="fa-solid fa-user"></i>
+        <Button className="bg-transparent text-base-content border-none  w-0   hover:bg-transparent text-2xl">
+          <i class="fa-solid fa-user text-xl md:text-3xl"></i>
         </Button>
       </SheetTrigger>
       <SheetContent className=" flex flex-col items-center bg-[#222222] text-white  ">

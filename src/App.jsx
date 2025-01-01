@@ -37,6 +37,7 @@ useEffect(() => {
   if (localTheme) {
     setTheme(localTheme);
   }
+
 }, [])
 
   return (

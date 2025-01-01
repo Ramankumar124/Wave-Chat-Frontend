@@ -28,10 +28,10 @@ localStorage.setItem('theme', newTheme);
 
   return (
     <div>
-      <button onClick={()=>settoggleSetting(!toggleSetting)} ><i class="fa-solid fa-gear"></i></button>
+      <button onClick={()=>settoggleSetting(!toggleSetting)} ><i class="fa-solid fa-gear md:text-4xl text-xl "></i></button>
 
-  { toggleSetting && <div className="fixed  inset-10 z-50">
-    <div data-theme={theme} className="w-[80%]  px-4 container mx-auto  pt-4 max-w-5xl">
+  { toggleSetting && <div className="fixed  inset-0 md:inset-10 z-50">
+    <div data-theme={theme} className="md:w-[80%] w-[100%]  px-4 container mx-auto  pt-4 max-w-5xl">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-1">
@@ -41,7 +41,7 @@ localStorage.setItem('theme', newTheme);
           <button onClick={()=>settoggleSetting(!toggleSetting)} className="fa-solid fa-xmark"></button>
         </div>
 
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+        <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 gap-2">
           {THEMES.map((t) => (
             <button
               key={t}
@@ -54,7 +54,7 @@ localStorage.setItem('theme', newTheme);
               <div className="relative h-8 w-full rounded-md overflow-hidden" 
               data-theme={t}
               >
-                <div className="absolute inset-0 grid grid-cols-4 gap-px p-1">
+                <div className="absolute inset-0 grid  grid-cols-2 md:grid-cols-4 gap-px p-1">
                   <div className="rounded bg-primary"></div>
                   <div className="rounded bg-secondary"></div>
                   <div className="rounded bg-accent"></div>

@@ -25,7 +25,7 @@ const Chat = ({chat,contactUserId}) => {
           >
             {/* {msg.image ? <img src={msg.image} alt="Shared" className="w-auto h-[300px]" /> : null} */}
             <div
-              className={`m-5 p-1  relative text-xl  h-auto min-h-12 min-w-20 max-w-[400px] shadow-sm ${
+              className={`md:m-5 m-2 p-1 tex-xs relative md:text-xl  h-auto min-h-12 min-w-20 max-w-44 md:max-w-96 shadow-sm ${
                 msg.sender === contactUserId
                   ? "bg-base-300 text-base-content"
                   : "bg-primary text-primary-content"
@@ -36,7 +36,7 @@ const Chat = ({chat,contactUserId}) => {
                   <img
                     src={msg.image}
                     alt="Shared"
-                    className="w-auto h-auto object-cover rounded-md"
+                    className="w-auto max-w-52 h-auto object-cover rounded-md"
                   />
                   {msg.content && (
                     <div className="mt-4 px-3">{msg.content}</div>
