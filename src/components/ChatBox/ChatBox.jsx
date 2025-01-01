@@ -35,16 +35,21 @@ const ChatBox = () => {
   let contactUserId = openChat.contactUserData?._id;
 
   const  audioPlayer=useRef();
-  setnewSocket(socket);
   
+ useEffect(() => {
+  
+   setnewSocket(socket);
+   console.log("socket value",socket);
+   
+ }, [socket])
   
   console.log("chat",chat);
   
   useEffect(() => {
     const fetchUserData = async () => {
-
-        const Data = await userData();
-        setUserData(Data);  // Set data after fetching
+      
+      const Data = await userData();
+      setUserData(Data);  // Set data after fetching
       
     };
     fetchUserData();
@@ -53,6 +58,8 @@ const ChatBox = () => {
   useEffect(() => {
     if(data){
         socket.emit("setup",({data,OrignalSocketId:socket.id}));     
+        console.log("seup");
+        
       setloading(false);  
     }
   }, [data])

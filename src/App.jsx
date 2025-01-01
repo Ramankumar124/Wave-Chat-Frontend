@@ -8,6 +8,7 @@ import { useEffect } from 'react'
 import { onMessage } from 'firebase/messaging'
 import { messaging } from './firebase'
 import { useUser } from './context/UserContext'
+import CreateProfile from './components/authPages./createProfile'
 
 function App() {
 const {theme,setTheme} = useUser();
@@ -48,6 +49,7 @@ useEffect(() => {
         <Route path='/' element={<Login/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/register' element={<Register/>}/>
+          <Route path='/createProfile' element={<CreateProfile/>} />
           <Route path='/home' element={<Home/>} />
         </Routes>
       </div>

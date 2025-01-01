@@ -21,27 +21,27 @@ const Login = () => {
     }
   }, []);
 
-  const validateInputs = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
-      toast.error('Please enter a valid email address.');
-      return false;
-    }
+  // const validateInputs = () => {
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   if (!email || !emailRegex.test(email)) {
+  //     toast.error('Please enter a valid email address.');
+  //     return false;
+  //   }
 
-    if (!password || password.length < 8) {
-      toast.error('Password must be at least 8 characters long.');
-      return false;
-    }
+  //   if (!password || password.length < 8) {
+  //     toast.error('Password must be at least 8 characters long.');
+  //     return false;
+  //   }
 
-    return true;
-  };
+  //   return true;
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateInputs()) {
-      return;
-    }
+    // if (!validateInputs()) {
+    //   return;
+    // }
 
     try {
       let response = await api.post('auth/login', { password, email });

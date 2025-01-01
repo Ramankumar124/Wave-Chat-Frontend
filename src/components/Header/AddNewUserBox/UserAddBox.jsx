@@ -17,8 +17,17 @@ import userDefaultImage from "@/assets/userDefaultImage.jpeg";
 const UserAddBox = () => {
   const [users, setusers] = useState([]);
   const [Filteredusers, setFilteredusers] = useState([]);
-
+  const [isopen, setisopen] = useState(false);
   const { data, setUserData, newSocket } = useUser();
+
+
+  // useEffect(() => {
+  //   if (data && data.contacts.length === 0) {
+  //     console.log("Contacts are empty, opening dialog...");
+  //     // setisopen(true);
+  //     ShowAllUsers();
+  //   }
+  // }, [data]) 
 
   const ShowAllUsers = async () => {
     console.log(data);
@@ -68,8 +77,11 @@ const UserAddBox = () => {
     setFilteredusers(newFilteredUsers); // Update the filtered list
   }
 
+
+
+
   useEffect(() => {
-    if (newSocket) {
+    // if (newSocket) {
       newSocket.on("IncomingfriendRequest", (sender, reciver) => {
  console.log("friend Request sender",sender);
  
@@ -140,14 +152,17 @@ const UserAddBox = () => {
         setUserData(updatedUserData);
         ShowAllUsers();
       });
-    }
+    // }
   }, [newSocket]);
 
   return (
     <div>
       <Toaster />
-      <Dialog>
-        <DialogTrigger onClick={ShowAllUsers}>
+      <Dialog open={isopen} onOpenChange={setisopen}>
+        <DialogTrigger onClick={()=>{
+          ShowAllUsers(); // Fetch users on trigger click
+          setisopen(true);
+        }} >
           <i class="fa-solid fa-plus md:text-4xl text-xl"></i>
         </DialogTrigger>
         <VisuallyHidden>
@@ -161,7 +176,7 @@ const UserAddBox = () => {
             type="text"
             placeholder="Find and add someone"
           />
-          <div className="All Users List flex flex-col py-2 w-[80%]  md:w-full  md:px-8 p-2 overflow-visible">
+          <div className="All Users List flex flex-col py-2 w-[80%]  md:w-full  md:px-8 p-2 overflow-y-scroll">
             {Filteredusers.length > 0 ? (
               Filteredusers.map((user) => {
                 const isPending = data.friendRequest.sent.some(
