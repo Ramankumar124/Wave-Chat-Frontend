@@ -1,11 +1,27 @@
 import { useUser } from "@/context/UserContext";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const NotificationPanel = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data,notification ,setopenChat,setnotification} = useUser();
   console.log(notification);
 
+  useEffect(() => {
+    // Fetch notifications from localStorage on component mount
+    const storedNotifications = localStorage.getItem("notifications");
+    if (storedNotifications) {
+      setnotification(JSON.parse(storedNotifications));
+    }
+  }, []); // Empty dependency array ensures this runs only once on mount
+  
+  useEffect(() => {
+    // Update localStorage whenever notifications change
+    localStorage.setItem("notifications", JSON.stringify(notification));
+
+    console.log(notification);
+    
+  }, [notification]); // Dependency array with notification ensures this runs when notification changes
+  
   // Group notifications by date
   const groupedNotifications = notification.reduce((acc, curr) => {
     const notificationDate = new Date(curr.messageTime);
@@ -35,6 +51,8 @@ const NotificationPanel = () => {
 
 
  function openChatFromNotification(userId){
+   console.log(userId);
+  
    data.contacts.map((contact)=>{
      if(contact._id===userId){
        setopenChat({isOpen:true,contactUserData:contact})
@@ -64,8 +82,8 @@ const NotificationPanel = () => {
 
       {/* Notification Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-black text-white rounded-lg shadow-lg z-10">
-          <div className="flex justify-between items-center p-4 border-b border-gray-700">
+        <div className="fixed left-10 md:absolute  md:right-0 md:-left-64  mt-2 w-80 bg-black text-white rounded-lg shadow-lg z-10 ">
+          <div className=" flex  justify-between items-center p-4 border-b border-gray-700">
             <h3 className="font-semibold">Notifications</h3>
             <button
               className="text-gray-400 hover:text-gray-200"
@@ -74,7 +92,7 @@ const NotificationPanel = () => {
               &times;
             </button>
           </div>
-          <div className="p-4 space-y-4">
+          <div className="p-4 space-y-4 overflow-y-scroll max-h-96">
   {Object.keys(groupedNotifications).map((label, dateIndex) => (
     <div key={dateIndex}>
       {/* Date Header */}
@@ -85,7 +103,7 @@ const NotificationPanel = () => {
           <div
           onClick={()=>openChatFromNotification(item.userId)}
             key={index}
-            className="p-2 bg-gray-800 rounded-lg flex justify-between items-start"
+            className="p-2 bg-gray-800  rounded-lg flex justify-between items-start "
           >
             <div>
               <p className="text-lg">{item.title}</p>

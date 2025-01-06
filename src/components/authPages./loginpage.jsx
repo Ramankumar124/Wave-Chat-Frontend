@@ -21,27 +21,27 @@ const Login = () => {
     }
   }, []);
 
-  // const validateInputs = () => {
-  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //   if (!email || !emailRegex.test(email)) {
-  //     toast.error('Please enter a valid email address.');
-  //     return false;
-  //   }
+  const validateInputs = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      toast.error('Please enter a valid email address.');
+      return false;
+    }
 
-  //   if (!password || password.length < 8) {
-  //     toast.error('Password must be at least 8 characters long.');
-  //     return false;
-  //   }
+    if (!password || password.length < 8) {
+      toast.error('Password must be at least 8 characters long.');
+      return false;
+    }
 
-  //   return true;
-  // };
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // if (!validateInputs()) {
-    //   return;
-    // }
+    if (!validateInputs()) {
+      return;
+    }
 
     try {
       let response = await api.post('auth/login', { password, email });
@@ -125,10 +125,10 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="bg-white rounded-md border-2 border-gray-200 text-black h-10 mt-2">
-          <button onClick={handleGoogleLogin} className="flex w-96 items-center justify-center">
-            <img className="w-8 h-8 flex items-center justify-center" src={googleIcon} alt="" />
-            <p className="text-lg">Sign in With Google</p>
+        <div className="bg-white rounded-md border-2 border-gray-200 text-black h-10 mt-2 flex items-center justify-center">
+          <button onClick={handleGoogleLogin} className="flex w-auto items-center justify-center gap-2 ">
+            <img className="w-8 h-8  flex items-center justify-center" src={googleIcon} alt="" />
+            <p className="md:text-lg text-sm">Sign in With Google</p>
           </button>
         </div>
 

@@ -16,12 +16,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useSocket } from "@/context/socket";
 
 
 const main = () => {
   const [Contacts, setContacts] = useState([]);
-  const {openChat,setopenChat,newSocket,data,setUserData}=useUser();
-
+  const {openChat,setopenChat,data,setUserData}=useUser();
+  const {socket}=useSocket();
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -50,8 +51,8 @@ useEffect(() => {
 }, [data])
 
 useEffect(() => {
-  if (newSocket) {
-    newSocket.on("Online-Users", (onlineUser) => {
+  if (socket) {
+    socket.on("Online-Users", (onlineUser) => {
       // console.log("Online users:", onlineUser);
 
       // Update the Contacts state with online status
@@ -66,11 +67,11 @@ useEffect(() => {
 
   // Clean up the socket listener when the component unmounts
   return () => {
-    if (newSocket) {
-      newSocket.off("Online-Users");
+    if (socket) {
+      socket.off("Online-Users");
     }
   };
-}, [newSocket,data]);
+}, [socket,data]);
 
 
 

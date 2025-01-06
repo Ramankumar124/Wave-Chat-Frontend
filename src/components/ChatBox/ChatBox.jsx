@@ -14,11 +14,12 @@ import userDefaultImage from "@/assets/userDefaultImage.jpeg";
 import ContactProfile from "./ContactProfile";
 import WebsiteLogo from "../../assets/website logo.png";
 import VoiceCall from "../Call/VoiceCall";
+import { useSocket } from "@/context/socket";
 
-const socket = io("http://localhost:5000");
+// const socket = io("http://localhost:5000");
 
 const ChatBox = () => {
-  const {data,setUserData,notification,setnotification,openChat,newSocket,setnewSocket,toggleCallBox,setToggleCallBox,isCallActive, setIsCallActive}=useUser();
+  const {data,setUserData,notification,setnotification,openChat,toggleCallBox,setToggleCallBox,isCallActive, setIsCallActive}=useUser();
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -27,6 +28,7 @@ const ChatBox = () => {
   const typingTimeoutRef = useRef(null); // For tracking typing timeout
   const chatEndRef = useRef(null);
   // const [toggleCallBox,setToggleCallBox]=useState(false);
+  const {socket}=useSocket();
   const [page, setpage] = useState(1);
   const [loading, setloading] = useState(true)
   
@@ -35,13 +37,6 @@ const ChatBox = () => {
   let contactUserId = openChat.contactUserData?._id;
 
   const  audioPlayer=useRef();
-  
- useEffect(() => {
-  
-   setnewSocket(socket);
-   console.log("socket value",socket);
-   
- }, [socket])
   
   console.log("chat",chat);
   
@@ -56,8 +51,8 @@ const ChatBox = () => {
 }, []);
 
   useEffect(() => {
-    if(data){
-        socket.emit("setup",({data,OrignalSocketId:socket.id}));     
+    if(data && socket){
+        socket.emit("setup",({data:{_id:data._id,name:data.name,email:data.email},OrignalSocketId:socket.id}));     
         console.log("seup");
         
       setloading(false);  
@@ -66,11 +61,12 @@ const ChatBox = () => {
   
 
   useEffect(() => {
-    socket.on("notify", ({ message, currentUserId ,socketUserName}) => {
+    if(socket){
+    socket.on("notify", ({ message, currentUserId ,senderName}) => {
       if (contactUserId) {
         console.log("contact " + contactUserId + " current " + currentUserId);
       }
-      console.log(notification);
+      console.log(senderName);
       
       // Checking if the notification is not for the current chat
       if (!contactUserId || (contactUserId !== currentUserId && contactUserId !== 'undefined')) {
@@ -78,13 +74,14 @@ const ChatBox = () => {
         let newNotification = {
           message,
           messageTime: new Date(),
-           title: socketUserName,
+           title: senderName,
             userId: currentUserId,
           
         }
-        setnotification((prev)=>[...prev,newNotification]);
         
-        toast.success(`${socketUserName+':' +message}`,{autoClose: false});
+        setnotification((prev)=>[newNotification,...prev]);
+        
+        // toast.success(`${senderName+':' +message}`,{autoClose: false});
         toast.custom((t) => (
           <div
             className={`${
@@ -93,16 +90,12 @@ const ChatBox = () => {
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-start">
-                <div className="flex-shrink-0 pt-0.5">
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixqx=6GHAjsWpt9&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
-                    alt=""
-                  />
+                <div className=" pt-0.5 w-10 h-10 rounded-full">
+                  <p className="text-xl font-bold w-10 h-10 bg-primary-content flex items-center justify-center rounded-full" >{senderName[0].toUpperCase()}</p>
                 </div>
                 <div className="ml-3 flex-1">
                   <p className="text-sm font-medium text-gray-900">
-                  {socketUserName}
+                  {senderName}
                   </p>
                   <p className="mt-1 text-sm text-gray-500">
                  {message}
@@ -122,36 +115,41 @@ const ChatBox = () => {
         ))
         console.log("received notification:", message);
       }
-    });
+    }
+);
   
     return () => {
       socket.off("notify");
       
     };
-  }, [contactUserId]); // <-- Add contactUserId to dependency array
+  }}, [contactUserId]); // <-- Add contactUserId to dependency array
   
 
 
-// Infinite scroll 
+// // Infinite scroll 
 // const chatBoxRef = useRef(null);
 // const handleInfinityScroll = async () => {
-  //   if (chatBoxRef.current) {
-    //     console.log(chatBoxRef.current.scrollTop);  // Use the ref to access chatBox
-//     if(chatBoxRef.current.scrollTop==100){
-  //       setTimeout(() => {
+//     if (chatBoxRef.current) {
+//         console.log(chatBoxRef.current.scrollTop);  // Use the ref to access chatBox
+//     if(chatBoxRef.current.scrollTop==10){
+//         setTimeout(() => {
 //         setpage(prev=>prev+1);
 
-//       }, 1000);
+//       }, 10);
+//       console.log("reached at top ");
+      
 //     }
 //   }
 // };
 
 // useEffect(() => {
-  //   const chatbox = chatBoxRef.current;
+//     const chatbox = chatBoxRef.current;
   
-  //   if (chatbox) {
-    //     chatbox.addEventListener("scroll", handleInfinityScroll);
+//     if (chatbox) {
+//       console.log("scroll hua");
+//         chatbox.addEventListener("scroll", handleInfinityScroll);
 //     return () => chatbox.removeEventListener("scroll", handleInfinityScroll);
+    
 //   }
 // }, [contactUserId]);
 
@@ -165,7 +163,7 @@ useEffect(() => {
         });
         let newData= response.data.data;
         newData.reverse();     
-        setChat((prev)=>[...newData]);
+        setChat((prev)=>[...newData,...prev]);
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -179,12 +177,12 @@ useEffect(() => {
   };
 
   fetchMessages();
-}, [contactUserId,page])
+}, [contactUserId])
 
 
 // New useEffect to handle room joining and socket events after data is updated
 useEffect(() => {
-  if (data && contactUserId) {
+  if (data && contactUserId && socket) {
 
       const currentUserId = data._id;
       const roomId = [currentUserId, contactUserId].sort().join("_");
@@ -237,13 +235,13 @@ useEffect(() => {
 
       // Handle notification for new message
  
-  }
-
-  return () => {
-    socket.off("receiveMessage");
-    socket.off("Typing");
-    socket.off("typing-stop");
-  };
+      
+      return () => {
+        socket.off("receiveMessage");
+        socket.off("Typing");
+        socket.off("typing-stop");
+      };
+    }
 }, [data, contactUserId]);
 
 
@@ -267,10 +265,11 @@ useEffect(() => {
       console.log("fb token",contactUserData.firebaseToken
       );
       
-      const reciverName=contactUserData.name;
-      console.log(reciverName);
+      const senderName=contactUserData.name;
+      console.log(senderName);
       
    const reciverFBToken=contactUserData.firebaseToken;
+   if(socket){
       socket.emit("sendMessage", {
         roomId,
         message,
@@ -278,10 +277,10 @@ useEffect(() => {
         currentUserId,
         contactUserId,
         reciverFBToken,
-        reciverName
+        senderName
       });
       setMessage("");
-    }
+   } }
   };
 
   if (!openChat.isOpen) {
@@ -333,14 +332,14 @@ useEffect(() => {
     const currentUserId = data._id;
     console.log(currentUserId);
     const roomId = [currentUserId, contactUserId].sort().join("_");
-  socket.emit("Typing-indicator",roomId,currentUserId);
+if(socket)  socket.emit("Typing-indicator",roomId,currentUserId);
   if (typingTimeoutRef.current) {
     clearTimeout(typingTimeoutRef.current);
   }
   
   // Hide typing indicator after 3 seconds of no typing
   typingTimeoutRef.current = setTimeout(() => {
-    socket.emit('Stop-typing',roomId);
+  if(socket)  socket.emit('Stop-typing',roomId);
     setShowTyping(false); // Stop showing "Typing..." after 3 seconds
   }, 1000); 
   }
@@ -365,7 +364,7 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
 
   return (
     <>
-    {toggleCallBox && <Call socket={socket} contactUserId={contactUserId}/>}
+    {toggleCallBox && <Call  contactUserId={contactUserId}/>}
     {ShowTyping && <div className="absolute left-[60%]  bottom-24 "><TypingIndicator/> </div>}
       <audio src={messageSoundBubble} ref={audioPlayer} ></audio>
       {selectedImage && (
@@ -441,7 +440,7 @@ const roomId = [currentUserId, contactUserId].sort().join("_");
         <div
         // ref={chatBoxRef} 
           id="chatBox"
-          className="flex-grow md:p-4  bg-base-100 overflow-y-auto"
+          className=" scrollable flex-grow md:p-4  bg-base-100 overflow-y-scroll "
         >
            {/* chats here  */}
           <Chat  chat={chat} contactUserId={contactUserId}/>

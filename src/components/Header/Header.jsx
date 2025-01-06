@@ -12,6 +12,7 @@ import NotificationPanel from "./NotificationPanel/NotificationPanel";
 import UserProfile from "./UserProfile/UserProfile";
 import SettingsPage from "./settingPanel/SettingPage";
 import WebsiteLogo from "../../assets/website logo.png";
+import { useSocket } from "@/context/socket";
 
 const Header = () => {
   async function requestPermission() {
@@ -51,7 +52,6 @@ const Header = () => {
 
   const {
     notification,
-    newSocket,
     toggleCallBox,
     setToggleCallBox,
     data,
@@ -64,6 +64,7 @@ const Header = () => {
   const [incomingCall, setIncomingCall] = useState(false); // State to control popup visibility
   const [icomingCalldata, seticomingCalldata] = useState();
   const [toggleNotfication, settoggleNotfication] = useState(false)
+ const {socket}=useSocket();
 
   useEffect(() => {
     function playAudio() {
@@ -74,7 +75,7 @@ const Header = () => {
   }, [notification]);
 
   useEffect(() => {
-    if (newSocket) {
+    if (socket) {
       // Define event listeners
       const handleIncomingCall = (icomingCalldata) => {
         setIncomingCall(true);
@@ -90,16 +91,16 @@ const Header = () => {
       };
 
       // Attach event listeners
-      newSocket.on("incomming-call", handleIncomingCall);
-      newSocket.on("call-rejected", handleCallRejected);
+      socket.on("incomming-call", handleIncomingCall);
+      socket.on("call-rejected", handleCallRejected);
 
       // Cleanup function to remove listeners on unmount or dependency change
       return () => {
-        newSocket.off("incomming-call", handleIncomingCall);
-        newSocket.off("call-rejected", handleCallRejected);
+        socket.off("incomming-call", handleIncomingCall);
+        socket.off("call-rejected", handleCallRejected);
       };
     }
-  }, [newSocket]);
+  }, [socket]);
 
   const handleAnswerCall = () => {
     console.log("icomingCalldata header", icomingCalldata);
@@ -110,7 +111,7 @@ const Header = () => {
   };
 
   const handleRejectCall = () => {
-    newSocket.emit("call-declined", icomingCalldata._id);
+    socket.emit("call-declined", icomingCalldata._id);
     setIncomingCall(false); // Hide popup after answering
   };
 
@@ -137,9 +138,9 @@ const Header = () => {
   
       <img className=" h-16" src={WebsiteLogo} alt="" />
       <div>
-        <Toaster />
+        
       </div>
-      {toggleCallBox && !isCallActive && <Call socket={newSocket} />}{" "}
+      {toggleCallBox && !isCallActive && <Call socket={socket} />}{" "}
       {/* Incoming Call Popup */}
       {incomingCall && (
         <div className="fixed top-5 left-1/2 transform -translate-x-1/2 p-4  bg-[#363F48] text-white rounded-xl shadow-lg text-center">

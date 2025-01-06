@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
 import { useUser } from '@/context/UserContext';
 import userDefaultImage from "@/assets/userDefaultImage.jpeg";
+import { userData } from '@/userData';
 
 const CreateProfile = () => {
 
@@ -17,6 +18,16 @@ const {data,setUserData} = useUser();
   const [selectedImage, setselectedImage,] = useState(null);
 const [name, setName] = useState("");
 const [bio, setUserBio] = useState("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      
+      const Data = await userData();
+      setUserData(Data);  // Set data after fetching
+      
+    };
+    fetchUserData();
+}, []);
 
 useEffect(() => {
 
@@ -36,7 +47,7 @@ useEffect(() => {
      if(response){
        console.log(response);
        if(response.status===200){
-        toast.success("Image Changed successfully");
+        toast.success("Image Uploaded successfully");
         setUserData(response.data.user);
 
          console.log("image uploaded successfully");
@@ -47,9 +58,18 @@ useEffect(() => {
   }
 }, [selectedImage])
 
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
     try {
+    e.preventDefault();
+    if(!name){
+       toast.error("Name is required");
+       return
+      }
+    if(!bio) {
+      toast.error("Bio is required");
+      return;
+}    
       console.log(data.email);
       
       let response = await api.post('auth/createProfile', {email:data.email,bio, name });

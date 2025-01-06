@@ -5,12 +5,13 @@ import { useUser } from "@/context/UserContext";
 import Draggable from "react-draggable";
 import { Toaster, toast } from "react-hot-toast";
 import Resizable from "react-resizable-box";
-const Call = ({ socket, contactUserId }) => {
+import { useSocket } from "@/context/socket";
+const Call = ({ contactUserId }) => {
   const [user, setuser] = useState();
   const { data, stream, setstream } = useUser();
   const [callEnded, setCallEnded] = useState(false);
   const [isMuted, setisMuted] = useState()
-
+ const {socket}=useSocket();
   const vedioRef = useRef(null);
   const peerVideoRef = useRef(null);
 

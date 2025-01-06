@@ -13,21 +13,22 @@ import api from "@/api";
 import { useUser } from "@/context/UserContext";
 import toast, { Toaster } from "react-hot-toast";
 import userDefaultImage from "@/assets/userDefaultImage.jpeg";
+import { useSocket } from "@/context/socket";
 
 const UserAddBox = () => {
   const [users, setusers] = useState([]);
   const [Filteredusers, setFilteredusers] = useState([]);
   const [isopen, setisopen] = useState(false);
-  const { data, setUserData, newSocket } = useUser();
+  const { data, setUserData } = useUser();
+const {socket}=useSocket();
 
-
-  // useEffect(() => {
-  //   if (data && data.contacts.length === 0) {
-  //     console.log("Contacts are empty, opening dialog...");
-  //     // setisopen(true);
-  //     ShowAllUsers();
-  //   }
-  // }, [data]) 
+  useEffect(() => {
+    if (data && data.contacts.length === 0) {
+      console.log("Contacts are empty, opening dialog...");
+      setisopen(true);
+      ShowAllUsers();
+    }
+  }, [data]) 
 
   const ShowAllUsers = async () => {
     console.log(data);
@@ -61,10 +62,11 @@ const UserAddBox = () => {
 
   function sendFriendRequest(user) {
     console.log(data);
-
-    console.log(user.name);
-    if (newSocket) {
-      newSocket.emit("SendFreindRequest", { sender: data, reciver: user });
+     const senderEmail=data.email
+     const reciverEmail=user.email
+    console.log("reciver email",reciverEmail);
+    if (socket) {
+      socket.emit("SendFreindRequest",  senderEmail, reciverEmail);
       toast.success(` Friend Request Sended to ${user.name}`);
     }
   }
@@ -81,9 +83,9 @@ const UserAddBox = () => {
 
 
   useEffect(() => {
-    // if (newSocket) {
-      newSocket.on("IncomingfriendRequest", (sender, reciver) => {
- console.log("friend Request sender",sender);
+    if (socket) {
+      socket.on("IncomingfriendRequest", ({sender, reciver}) => {
+ console.log("friend Request sender",sender ,reciver);
  
         // console.log(reciver);
 
@@ -99,7 +101,7 @@ const UserAddBox = () => {
                 <div className="flex-shrink-0">
                   <img
                     className="h-12 w-12 rounded-full"
-                    src={sender.profilePicture}
+                    src={sender.profilePicture?sender.profilePicture:userDefaultImage}
                     alt="User avatar"
                   />
                 </div>
@@ -118,7 +120,7 @@ const UserAddBox = () => {
                     // Handle accept logic
 
                     toast.dismiss(t.id);
-                    newSocket.emit("freindRequestAccepted", sender, reciver);
+                    socket.emit("freindRequestAccepted",sender?.email, reciver?.email);
                   }}
                   className="bg-indigo-600 text-white w-fit h-fit p-2  rounded-lg  text-sm hover:bg-indigo-500 focus:outline-none"
                 >
@@ -127,10 +129,7 @@ const UserAddBox = () => {
                 <button
                   onClick={() => {
                     // Handle decline logic
-                    newSocket.emit("friendRequestDeclined", sender, reciver);
-                    console.log("Declined", sender, reciver);
-                    
-                    toast.dismiss(t.id);
+                    socket.emit("friendRequestDeclined",sender?.email,reciver?.email);
                   }}
                   className="bg-red-600 text-white w-fit h-fit p-2  rounded-lg   text-sm hover:bg-red-500 focus:outline-none"
                 >
@@ -142,23 +141,66 @@ const UserAddBox = () => {
           { duration: Infinity }
         );
       });
+     
+      
 
-      newSocket.on("FriendRequestSended", (updatedUser) => {
-        setUserData(updatedUser);
-        console.log("updatedUser", updatedUser);
-      });
+      socket.on("FriendRequestSended", (senderChanges) => {
+        try {
+        if (!data || !data.friendRequest) {''
+          console.error("Error: 'data' or 'data.friendRequest' is undefined.");
+          return; // Exit the handler early if data is not properly initialized
+        }
+        // Create a new copy of the data object with updated friendRequest.sent
+        const newData = {
+          ...data, // Copy the existing data
+          friendRequest: {
+            ...data.friendRequest, // Copy the existing friendRequest
+            sent: senderChanges,   // Update the sent property
+          },
+        };
+        setUserData(newData);
+          
+      } catch (error) {
+        console.error("Error updating user data:", error);
+      }
+ }     );
 
-      newSocket.on("AcceptedFriendRequest", (updatedUserData) => {
-        setUserData(updatedUserData);
-        ShowAllUsers();
-      });
-    // }
-  }, [newSocket]);
+ socket.on("AcceptedFriendRequest", (userContactsChanges) => {
+  try {
+    const newData={
+      ...data,
+      contacts:userContactsChanges
+    }
+    setUserData(newData);
+    ShowAllUsers();
+  } catch (error) {
+    console.error("Error updating user data:", error); 
+  }
+});
 
+    }
+    return ()=>{
+      if(socket){
+        socket.off("IncomingfriendRequest");
+        socket.off("FriendRequestSended");
+        socket.off("AcceptedFriendRequest");
+    }}
+  }, [socket,data]);
+
+
+ useEffect(() => {
+      console.log("data changed",data);
+      
+      }, [data])
   return (
     <div>
+      {(isopen && data?.contacts.length==0) &&
+      <div className="fixed z-50 left-1/2 top-[10%] -translate-x-1/2 flex flex-col items-center w-full">
+       <p className="text-x2l   md:text-4xl"> Welcome To Wave Chat</p>
+       <p className="text-xl md:text-2xl">Add Users To Your Conctact</p>
+      </div>}
       <Toaster />
-      <Dialog open={isopen} onOpenChange={setisopen}>
+      <Dialog open={isopen} onOpenChange={setisopen} >
         <DialogTrigger onClick={()=>{
           ShowAllUsers(); // Fetch users on trigger click
           setisopen(true);
@@ -168,7 +210,7 @@ const UserAddBox = () => {
         <VisuallyHidden>
           <DialogTitle>Hidden Dialog Title</DialogTitle>
         </VisuallyHidden>
-        <DialogContent className="md:w-[400px] md:h-[600px] w-[80%] h-auto max-h-[300px] flex flex-col items-center bg-base-200 text-base-content">
+        <DialogContent className="md:w-[500px]  w-[80%] h-auto max-h-[300px] md:max-h-[600px] flex flex-col items-center bg-base-200 text-base-content">
           <h1>Find People</h1>
 
           <Input

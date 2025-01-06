@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
     contactUserData: {},
   });
 
-  const [newSocket, setnewSocket] = useState(undefined);
+  // const [newSocket, setnewSocket] = useState(null);
   const [toggleCallBox, setToggleCallBox] = useState(false);
   const [stream, setstream] = useState();
   const [isCallActive, setIsCallActive] = useState(false);
@@ -29,8 +29,8 @@ const [theme, setTheme] = useState("coffee");
         setnotification,
         openChat,
         setopenChat,
-        newSocket,
-        setnewSocket,
+        // newSocket,
+        // setnewSocket,
         toggleCallBox,
         setToggleCallBox,
         stream,

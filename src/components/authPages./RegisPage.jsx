@@ -21,6 +21,7 @@ const Register = () => {
   //   }
   // }, []);
 
+  
   const validateInputs = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
@@ -121,15 +122,15 @@ const Register = () => {
             type="submit"
             className="w-full px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600"
           >
-            Login
+            Register
           </button>
         </form>
 
         <div className="bg-white rounded-md border-2 border-gray-200 text-black h-10 mt-2">
-          <button onClick={handleGoogleLogin} className="flex w-96 items-center justify-center">
-            <img className="w-8 h-8 flex items-center justify-center" src={googleIcon} alt="" />
-            <p className="text-lg">Sign in With Google</p>
-          </button>
+           <button onClick={handleGoogleLogin} className="flex w-auto items-center justify-center gap-2 ">
+                      <img className="w-8 h-8  flex items-center justify-center" src={googleIcon} alt="" />
+                      <p className="md:text-lg text-sm">Sign in With Google</p>
+                    </button>
         </div>
 
         <div className="mt-4 text-center">
