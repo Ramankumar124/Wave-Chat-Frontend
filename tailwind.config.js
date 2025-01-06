@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
-const daisyui = require("daisyui");
+import daisyui from "daisyui";
+
 
 export default {
     darkMode: ["class"],
