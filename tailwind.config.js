@@ -2,34 +2,30 @@
 import daisyui from "daisyui"
 
 export default {
-    darkMode: ["class"],
-    content: [
+  darkMode: ["class"],
+  content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    ],
+  ],
   theme: {
-  	extend: {
-
-		animation: {
-			enter: 'fadeIn 0.5s ease-out',
-			leave: 'fadeOut 0.5s ease-in',
-		  },
-		  keyframes: {
-			fadeIn: {
-			  from: { opacity: 0 },
-			  to: { opacity: 1 },
-			},
-			fadeOut: {
-			  from: { opacity: 1 },
-			  to: { opacity: 0 },
-			},
-		  },
-
-  		}
-  	
+    extend: {
+      animation: {
+        enter: 'fadeIn 0.5s ease-out',
+        leave: 'fadeOut 0.5s ease-in',
+      },
+      keyframes: {
+        fadeIn: {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
+        fadeOut: {
+          from: { opacity: 1 },
+          to: { opacity: 0 },
+        },
+      },
+    },
   },
-  plugins: [require("tailwindcss-animate")],
-  plugins: [daisyui],
+  plugins: [tailwindcssAnimate, daisyui],
   daisyui: {
     themes: [
       "light",
@@ -66,5 +62,4 @@ export default {
       "sunset",
     ],
   },
-}
-
+};
