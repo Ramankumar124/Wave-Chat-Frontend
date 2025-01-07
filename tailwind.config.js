@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import daisyui from "daisyui"
-
+import tailwindcssAnimate from "tailwindcss-animatecss"
 export default {
   darkMode: ["class"],
   content: [
