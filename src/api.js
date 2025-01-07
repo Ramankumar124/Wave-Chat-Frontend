@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api=axios.create({
-    baseURL:'http://localhost:5000/',
+    baseURL:'https://wave-chat-vywm.onrender.com/',
     withCredentials: true,  // This ensures cookies are sent
 })
 export default api;

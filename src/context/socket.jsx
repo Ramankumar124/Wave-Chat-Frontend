@@ -10,7 +10,14 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Initialize the socket connection
-    const socketInstance = io("http://localhost:5000", {
+
+    const SOCKET_URL =
+    process.env.NODE_ENV === "production"
+      ? "wss://wave-chat-vywm.onrender.com" // Production Render URL
+      : "http://localhost:5000"; // Local development URL
+
+
+    const socketInstance = io(SOCKET_URL, {
       transports: ["websocket"], // Optional: Force WebSocket transport
     });
 
