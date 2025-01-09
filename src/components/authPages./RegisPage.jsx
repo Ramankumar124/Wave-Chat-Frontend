@@ -47,6 +47,7 @@ const Register = () => {
     try {
       let response = await api.post('auth/register', { password, email });
       if (response.status === 201) {
+           Cookies.set('token', response.data.token);
         toast.success('Register Successful');
         navigate('/createProfile');
       }
@@ -64,6 +65,7 @@ const Register = () => {
       console.log(response);
 
       if (response.status === 200) {
+       Cookies.set('token', response.data.token);
         navigate('/createProfile');
       }
     } catch (error) {

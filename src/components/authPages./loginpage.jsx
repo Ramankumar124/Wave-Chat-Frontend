@@ -46,6 +46,7 @@ const Login = () => {
     try {
       let response = await api.post('auth/login', { password, email });
       if (response.status === 200) {
+        Cookies.set('token', response.data.token);
         toast.success('Login Successful');
         navigate('/home');
       }
@@ -61,7 +62,8 @@ const Login = () => {
       console.log(result);
       let response = await api.post('auth/googleLogin', { data: result });
       console.log(response);
-
+      Cookies.set('token', response.data.token);
+    
       if (response.status === 200) {
         navigate('/home');
       }
