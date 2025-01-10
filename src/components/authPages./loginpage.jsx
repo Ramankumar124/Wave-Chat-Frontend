@@ -45,8 +45,20 @@ const Login = () => {
 
     try {
       let response = await api.post('auth/login', { password, email });
-      if (response.status === 200) {
-        Cookies.set('token', response.data.token);
+      if (response.status === 201) {
+        console.log("logging website",response.data.token);
+        
+        // Cookies.set('token', response.data.token);
+        // Cookies.set('token', response.data.token);
+      //   Cookies.set('token', response.data.token, {
+      //     path: '/',         // Accessible from all routes
+      //     secure: false,      // Required for HTTPS
+      //     sameSite: 'none',  // Allows cross-origin requests
+      //     domain: 'https://wave-chat-vywm.onrender.com/', // Set to backend domain if needed
+      // });
+      console.log(response);
+      console.log(document.cookie);
+      
         toast.success('Login Successful');
         navigate('/home');
       }

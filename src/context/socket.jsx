@@ -17,7 +17,7 @@ export const SocketProvider = ({ children }) => {
       : "http://localhost:5000"; // Local development URL
 
 
-    const socketInstance = io(SOCKET_URL, {
+    const socketInstance = io("wss://wave-chat-vywm.onrender.com", {
       transports: ["websocket"], // Optional: Force WebSocket transport
     });
 
