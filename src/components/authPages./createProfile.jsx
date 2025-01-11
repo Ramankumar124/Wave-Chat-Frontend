@@ -72,7 +72,7 @@ useEffect(() => {
 }    
       console.log(data.email);
       
-      let response = await api.post('auth/createProfile', {email:data.email,bio, name });
+      let response = await api.post('/auth/createProfile', {email:data.email,bio, name });
       if (response.status === 200) {
         toast.success('Account Created Successfuly');
         navigate('/home');

@@ -43,7 +43,7 @@ const Login = () => {
     }
 
     try {
-      let response = await api.post('auth/login', { password, email });
+      let response = await api.post('/auth/login', { password, email });
       if (response.status === 201) {
         console.log("logging website",response.data.token);
       localStorage.setItem('token', response.data.token);
@@ -60,7 +60,7 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       console.log(result);
-      let response = await api.post('auth/googleLogin', { data: result });
+      let response = await api.post('/auth/googleLogin', { data: result });
       console.log(response);
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token);

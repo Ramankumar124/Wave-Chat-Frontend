@@ -44,7 +44,7 @@ const Register = () => {
     }
 
     try {
-      let response = await api.post('auth/register', { password, email });
+      let response = await api.post('/auth/register', { password, email });
       if (response.status === 201) {
            localStorage.setItem('token', response.data.token);
         toast.success('Register Successful');
@@ -60,7 +60,7 @@ const Register = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       console.log(result);
-      let response = await api.post('auth/googleLogin', { data: result });
+      let response = await api.post('/auth/googleLogin', { data: result });
       console.log(response);
       if (response.status === 200) {
        localStorage.setItem('token', response.data.token);
