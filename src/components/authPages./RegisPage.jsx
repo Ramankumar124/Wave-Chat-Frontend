@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import api from '../../api';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import { toast, Toaster } from 'react-hot-toast';
 import { auth, googleProvider } from '@/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
@@ -14,12 +13,12 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const token = Cookies.get('token');
-  //   if (token) {
-  //     navigate('/home');
-  //   }
-  // }, []);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/home');
+    }
+  }, []);
 
   
   const validateInputs = () => {
@@ -47,7 +46,7 @@ const Register = () => {
     try {
       let response = await api.post('auth/register', { password, email });
       if (response.status === 201) {
-           Cookies.set('token', response.data.token);
+           localStorage.setItem('token', response.data.token);
         toast.success('Register Successful');
         navigate('/createProfile');
       }
@@ -63,9 +62,8 @@ const Register = () => {
       console.log(result);
       let response = await api.post('auth/googleLogin', { data: result });
       console.log(response);
-
       if (response.status === 200) {
-       Cookies.set('token', response.data.token);
+       localStorage.setItem('token', response.data.token);
         navigate('/createProfile');
       }
     } catch (error) {

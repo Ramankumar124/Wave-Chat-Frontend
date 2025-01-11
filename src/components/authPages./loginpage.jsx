@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import api from '../../api';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import { toast, Toaster } from 'react-hot-toast';
 import { auth, googleProvider } from '@/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
@@ -15,7 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = Cookies.get('token');
+    const token = localStorage.getItem('token');
     if (token) {
       navigate('/home');
     }
@@ -47,18 +46,7 @@ const Login = () => {
       let response = await api.post('auth/login', { password, email });
       if (response.status === 201) {
         console.log("logging website",response.data.token);
-        
-        // Cookies.set('token', response.data.token);
-        // Cookies.set('token', response.data.token);
-      //   Cookies.set('token', response.data.token, {
-      //     path: '/',         // Accessible from all routes
-      //     secure: false,      // Required for HTTPS
-      //     sameSite: 'none',  // Allows cross-origin requests
-      //     domain: 'https://wave-chat-vywm.onrender.com/', // Set to backend domain if needed
-      // });
-      console.log(response);
-      console.log(document.cookie);
-      
+      localStorage.setItem('token', response.data.token);
         toast.success('Login Successful');
         navigate('/home');
       }
@@ -74,9 +62,8 @@ const Login = () => {
       console.log(result);
       let response = await api.post('auth/googleLogin', { data: result });
       console.log(response);
-      Cookies.set('token', response.data.token);
-    
       if (response.status === 200) {
+        localStorage.setItem('token', response.data.token);
         navigate('/home');
       }
     } catch (error) {

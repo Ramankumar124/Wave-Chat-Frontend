@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/allChatsSideBar/SideBar";
 import ChatBox from "../components/ChatBox/ChatBox";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header/Header";
 const Home = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    const token = Cookies.get("token");
+    const token = localStorage.getItem("token");
     if (!token) {
       navigate("/");
     }

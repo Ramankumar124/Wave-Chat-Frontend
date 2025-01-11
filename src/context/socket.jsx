@@ -11,13 +11,9 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     // Initialize the socket connection
 
-    const SOCKET_URL =
-    process.env.NODE_ENV === "production"
-      ? "wss://wave-chat-vywm.onrender.com" // Production Render URL
-      : "http://localhost:5000"; // Local development URL
+    const SOCKET_URL =import.meta.env.VITE_WSS_API_URL|| 'http://localhost:5000'
 
-
-    const socketInstance = io("wss://wave-chat-vywm.onrender.com", {
+    const socketInstance = io(SOCKET_URL, {
       transports: ["websocket"], // Optional: Force WebSocket transport
     });
 

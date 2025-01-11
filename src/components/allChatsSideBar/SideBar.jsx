@@ -1,21 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { userData } from "@/userData";
-import api from '@/api'
-import Cookies from 'js-cookie'
-import { io } from "socket.io-client";
 import { useUser } from "@/context/UserContext";
 import userDefaultImage from "@/assets/userDefaultImage.jpeg";
-
-
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { useSocket } from "@/context/socket";
 
 

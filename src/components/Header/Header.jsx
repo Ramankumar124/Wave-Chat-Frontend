@@ -5,7 +5,6 @@ import Call from "../Call/Call";
 import { toast, Toaster } from "react-hot-toast";
 import { messaging } from "../../firebase";
 import { getToken } from "firebase/messaging";
-import Cookies from "js-cookie";
 import api from "@/api";
 import UserAddBox from "./AddNewUserBox/UserAddBox";
 import NotificationPanel from "./NotificationPanel/NotificationPanel";
@@ -44,9 +43,7 @@ const Header = () => {
 
   useEffect(() => {
     // Req user for notification permission
-    const cookieValue = Cookies.get("token");
-    console.log(cookieValue);
-
+    const cookieValue = localStorage.getItem("token");
     requestPermission();
   }, []);
 
@@ -128,7 +125,7 @@ const Header = () => {
     try {
         const response = await api.get('/auth/logout'); 
         location.reload(); 
-        Cookies.remove('token'); 
+        localStorage.removeItem('token'); 
     } catch (error) {
         console.log("Error during logout:", error);
     }
