@@ -113,7 +113,7 @@ const Call = ({ contactUserId }) => {
               className="flex object-cover border-2   border-green-500 md:w-[250px] md:h-[250px] "
               ref={vedioRef}
               style={{  borderRadius: "50px" }}
-            
+              muted
               autoPlay
             ></video>
           </div>
