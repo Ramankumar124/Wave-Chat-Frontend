@@ -39,8 +39,9 @@ const Call = ({ contactUserId }) => {
 
   useEffect(() => {
     myPeer.current = new Peer(undefined, {
-      host: "localhost",
-      port: 9000,
+      host: "https://wavechat-perjs-server.onrender.com",
+      secure:true,
+      port: 443,
       path: "/myapp",
     });
     // console.log("new peer",newPeer);
