@@ -1,0 +1,113 @@
+import React, { useState, useRef, useEffect } from "react";
+import { ArrowRight } from "lucide-react";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "../ui/input-otp";
+import Api from "@/api";
+import { otpSchema, OtpInput } from "@/lib/Schemas/authSchemas";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Bounce,toast, ToastContainer } from "react-toastify";
+interface OTPVerificationProps {
+  email: string;
+  onPageChange: (page: string) => void;
+}
+
+const OtpVerifyEmail = ({ email, onPageChange }: OTPVerificationProps) => {
+  const {
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setValue,
+  } = useForm<OtpInput>({
+    resolver: zodResolver(otpSchema),
+  });
+
+  const onSubmit = async (data: OtpInput) => {
+    const response = await Api.post("/auth/verifyEmail",data);
+    if ((response.status = 201)) {
+      console.log("you entered right otp");
+      onPageChange("login");
+    }
+  };
+
+  const resendOtpHandler = async () => {
+    try {
+      const response = await Api.post("/auth/resendEmail",email);
+
+      console.log("email send sucessfully");
+      toast("Email Resend Successfully");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error?.message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+        });
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+     <ToastContainer/>
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-white">Enter OTP</h1>
+        <p className="text-gray-400 mt-2">We've sent a code to {email}</p>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="flex justify-center gap-2">
+          <div className="space-y-2">
+            <InputOTP
+              maxLength={6}
+              onChange={(newValue: string) => setValue("otp", newValue)}
+            >
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+              </InputOTPGroup>
+              <InputOTPSeparator />
+              <InputOTPGroup>
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+            <div className="text-center text-sm">
+              <p>Enter your one-time password.</p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+        >
+          Verify OTP
+          <ArrowRight className="h-4 w-4" />
+        </button>
+
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={resendOtpHandler}
+            className="text-purple-400 hover:text-purple-300"
+          >
+            Resend Code
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default OtpVerifyEmail;
