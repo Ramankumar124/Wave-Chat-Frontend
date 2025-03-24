@@ -25,7 +25,6 @@ const UserProfile = () => {
 useEffect(() => {
 
   if(selectedImage){
-
     const handleImageUpload = async () => {
       const formData = new FormData();
       formData.append("profilePicture", selectedImage);
@@ -73,7 +72,7 @@ useEffect(() => {
         >
           <img
             className="w-full h-full rounded-full object-cover"
-            src={data?.profilePicture?data?.profilePicture:userDefaultImage}
+            src={data?.avatar?data?.avatar.url:userDefaultImage}
             alt="profile Picture"
           />
           <div className=" absolute bottom-2 right-0 bg-orange-500 p-1 px-2 rounded-full">
@@ -137,11 +136,7 @@ useEffect(() => {
           </div>
         </div>
 
-        <SheetFooter>
-          <SheetClose asChild>
-            <Button type="submit">Save changes</Button>
-          </SheetClose>
-        </SheetFooter>
+        
       </SheetContent>
     </Sheet>
   );

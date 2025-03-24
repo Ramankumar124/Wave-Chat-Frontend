@@ -1,66 +1,59 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useUser } from "@/context/UserContext";
+import { useEffect, useRef, useState } from "react";
 import NotificationSound from "../../assets/NotificationSound.mp3";
 import Call from "../Call/Call";
-import { toast, Toaster } from "react-hot-toast";
-import { messaging } from "../../firebase";
-import { getToken } from "firebase/messaging";
 import UserAddBox from "./AddNewUserBox/UserAddBox";
 import NotificationPanel from "./NotificationPanel/NotificationPanel";
 import UserProfile from "./UserProfile/UserProfile";
 import SettingsPage from "./settingPanel/SettingPage";
 import WebsiteLogo from "../../assets/website logo.png";
 import { useSocket } from "@/context/socket";
-import Api from "@/api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store/store";
-
+import { setStream, setToggleCallBox } from "@/redux/features/applSlice";
+import { useLogoutUserMutation } from "@/redux/api/apiSlice";
+import { getToken } from "firebase/messaging";
+import { messaging } from "@/firebase";
+import Api from "@/api";
 const Header = () => {
-  // async function requestPermission() {
-  //   const permission = await Notification.requestPermission();
-  //   if (permission === "granted") {
-  //     // Generate Token
-  //     const FBtoken = await getToken(messaging, {
-  //       vapidKey:
-  //         "BApqSCZ8GP01NlRztqshlwYKnKW-HoRPFVMtVismbf4DaoqmusYlDAwXKUwJIiizpWS1Nf6LKgH36bRm9rgeEV8",
-  //     });
-  //     console.log("Token Gen", FBtoken);
-  //     try {
-  //       const response = await Api.post("/Notification/storeToken", {
-  //         FBtoken,
-  //       });
-  //       console.log(response);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //     // Send this token  to server ( db)
-  //   } else if (permission === "denied") {
-  //     alert("You denied for the notification");
-  //   }
-  // }
+  async function requestPermission() {
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      // Generate Token
+      const FBtoken = await getToken(messaging, {
+        vapidKey:
+          "BApqSCZ8GP01NlRztqshlwYKnKW-HoRPFVMtVismbf4DaoqmusYlDAwXKUwJIiizpWS1Nf6LKgH36bRm9rgeEV8",
+      });
+      console.log("Token Gen", FBtoken);
+      try {
+        const response = await Api.post("/Notification/storeToken", {
+          FBtoken,
+        });
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+      // Send this token  to server ( db)
+    } else if (permission === "denied") {
+      alert("You denied for the notification");
+    }
+  }
 
-  // useEffect(() => {
-  //   requestPermission();
-  // }, []);
+  useEffect(() => {
+    requestPermission();
+  }, []);
 
-  // const {
-  //   // notification,
-  //   toggleCallBox,
-  //   setToggleCallBox,
-  //   // data,
-  //   stream,
-  //   setstream,
-  //   isCallActive,
-  //   setIsCallActive,
-  // } = useUser();
-
-  const data=useSelector((state:RootState)=>state.auth.user);
-  const notification=useSelector((state:RootState)=>state.Chat.notifications);
+  const notification = useSelector(
+    (state: RootState) => state.Chat.notifications
+  );
   const audioPlayer = useRef(null);
   const [incomingCall, setIncomingCall] = useState(false); // State to control popup visibility
   const [icomingCalldata, seticomingCalldata] = useState();
-  const [toggleNotfication, settoggleNotfication] = useState(false)
- const {socket}=useSocket();
+  const { socket } = useSocket();
+  const dispatch = useDispatch();
+  const { isCallActive, stream, toggleCallBox } = useSelector(
+    (state: RootState) => state.app
+  );
+  const [logoutUser, { isLoading, isError, error }] = useLogoutUserMutation();
 
   useEffect(() => {
     function playAudio() {
@@ -72,21 +65,17 @@ const Header = () => {
 
   useEffect(() => {
     if (socket) {
-      // Define event listeners
       const handleIncomingCall = (icomingCalldata) => {
         setIncomingCall(true);
         seticomingCalldata(icomingCalldata);
       };
-
       const handleCallRejected = async () => {
         location.reload();
         console.log("call declined");
         setIncomingCall(false);
-        // setToggleCallBox(false);
+        dispatch(setToggleCallBox(false));
         stopMediaStream();
       };
-
-      // Attach event listeners
       socket.on("incomming-call", handleIncomingCall);
       socket.on("call-rejected", handleCallRejected);
 
@@ -101,48 +90,40 @@ const Header = () => {
   const handleAnswerCall = () => {
     console.log("icomingCalldata header", icomingCalldata);
     setIncomingCall(false); // Hide popup after answering
+    dispatch(setToggleCallBox(true));
     // setToggleCallBox(true);
     // Add your answer call logic here
     console.log(stream);
   };
 
   const handleRejectCall = () => {
-    socket.emit("call-declined", icomingCalldata._id);
+    socket?.emit("call-declined", icomingCalldata._id);
     setIncomingCall(false); // Hide popup after answering
   };
 
-  // const stopMediaStream = () => {
-  //   if (stream) {
-  //     stream.getTracks().forEach((track) => track.stop());
-  //     setstream(null);
-  //   }
-  // };
-
-  
-  const handleLogout = async () => {
-    console.log("hello");
-    try {
-        const response = await api.get('/auth/logout'); 
-        location.reload(); 
-        localStorage.removeItem('token'); 
-    } catch (error) {
-        console.log("Error during logout:", error);
+  const stopMediaStream = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      dispatch(setStream(null));
+      // setstream(null);
     }
-}
+  };
+
+  const handleLogout = async () => {
+    await logoutUser(null);
+    if (isError) console.log(error);
+  };
   return (
     <div className="  w-full h-auto bg-base-200  text-3xl flex justify-between items-center">
-  
       <img className=" h-16" src={WebsiteLogo} alt="" />
-      <div>
-        
-      </div>
-      {/* {toggleCallBox && !isCallActive && <Call socket={socket} />}{" "} */}
+      {toggleCallBox && !isCallActive && <Call socket={socket} />}
       {/* Incoming Call Popup */}
       {incomingCall && (
         <div className="fixed top-5 left-1/2 transform -translate-x-1/2 p-4  bg-[#363F48] text-white rounded-xl shadow-lg text-center">
           <div className="w-full h-1/2 flex items-center gap-3">
             <div className="imagecontainer w-12 h-12 rounded-full bg-yellow-400">
               {/* <img src="" alt="" /> */}
+              {/* <p className="text-white text-3xl">  <IoCallSharp /></p> */}
             </div>
             <div className="flex flex-col items-start">
               <p className="text-2xl font-bold">{icomingCalldata.name}</p>
@@ -167,26 +148,21 @@ const Header = () => {
       <audio ref={audioPlayer} src={NotificationSound}></audio>
       <div className=" flex mr-2 md:mr-7 gap-3 md:gap-5">
         <div>
-           <UserAddBox/>
+          <UserAddBox />
         </div>
-        <div className="" >
-           
-
+        <div>
           <SettingsPage />
         </div>
         <div>
-    
-        <NotificationPanel/>
+          <NotificationPanel />
         </div>
-
         <div>
-          <UserProfile/>
+          <UserProfile />
         </div>
-        <div >
-       <button onClick={handleLogout}>
-       <i className="fa-solid fa-arrow-right-from-bracket text-xl md:text-3xl"></i>
-        </button>
-        
+        <div>
+          <button onClick={handleLogout}>
+            <i className="fa-solid fa-arrow-right-from-bracket text-xl md:text-3xl"></i>
+          </button>
         </div>
       </div>
     </div>

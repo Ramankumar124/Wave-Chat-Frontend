@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "./allChatsSideBar/SideBar";
-import ChatBox from "./ChatBox/ChatBox";
-import Header from "./Header/Header";
+import Sidebar from "../../components/ChatSideBar/SideBar";
+import ChatBox from "../../components/ChatBox/ChatBox";
+import Header from "../../components/Header/Header";
 const Home = () => {
-
   return (
     <div className="w-screen h-screen">
       <Header />

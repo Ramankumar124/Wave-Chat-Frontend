@@ -21,11 +21,12 @@ interface contact {
     _id: string;
   };
   firebaseToken: string;
+  createdAt:Date
 }
 const ContactProfile = ({contactUserData}:{contactUserData:contact}) => {
-  const ShowUserProfile = ( ) => {};
+
   return (
-    <div className="relative" >
+    <div className="z-[1000]" >
       <Dialog>
         <DialogTrigger  >
           <img
@@ -40,7 +41,7 @@ const ContactProfile = ({contactUserData}:{contactUserData:contact}) => {
         <VisuallyHidden>
           <DialogTitle>Hidden Dialog Title</DialogTitle>
         </VisuallyHidden>
-        <DialogContent className=" absolute z-10 p-3  w-80 h-auto md:w-[500px] md:h-[700px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center bg-[#222222] text-base-content gap-3" >
+        <DialogContent className=" fixed z-50 p-3  w-80 h-auto md:w-[500px] md:h-[700px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center bg-[#222222] text-base-content gap-3" >
         
         <div className="absolute right-4 top-4"><DialogClose>
         <i className="fa-solid fa-xmark"></i>
@@ -52,7 +53,7 @@ const ContactProfile = ({contactUserData}:{contactUserData:contact}) => {
                 >
                   <img
                     className="w-full h-full rounded-full object-cover"
-                    src={contactUserData?.avatar}
+                    src={contactUserData?.avatar?.url}
                     alt="profile Picture"
                   />
                 </div>
@@ -61,7 +62,7 @@ const ContactProfile = ({contactUserData}:{contactUserData:contact}) => {
           
                   </div>
                 <div className="bio  flex flex-col items-center">
-                  <p className="italic">East or west apple is best</p>
+                  <p className="italic">{contactUserData?.bio}</p>
                   <p className="text-gray-400">Bio</p>
                 </div>
                 <div

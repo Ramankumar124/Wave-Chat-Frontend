@@ -2,7 +2,7 @@ import React from 'react';
 
 const TypingIndicator = () => {
   return (
-    <div className="typing-indicator" style={styles.typingIndicator}>
+    <div className="typing-indicator" style={styles.typingIndicator as React.CSSProperties}>
       <span style={{ ...styles.span, ...styles.firstSpan }}></span>
       <span style={{ ...styles.span, ...styles.secondSpan }}></span>
       <span style={{ ...styles.span, ...styles.thirdSpan }}></span>
@@ -24,7 +24,7 @@ const styles = {
   span: {
     height: '10px',
     width: '10px',
-    float: 'left',
+    cssFloat: 'left',
     margin: '0 1px',
     backgroundColor: '#9E9EA1',
     display: 'block',

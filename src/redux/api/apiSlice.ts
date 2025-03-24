@@ -12,14 +12,21 @@ export const userApi=createApi({
         }),
         providesTags:["User"]
     }),
-    getChat:builder.query<AxiosResponse, { contactUserId: string; page: number }>({
-      query: ({ contactUserId, page }) => ({
-        url: `/chat/${contactUserId}?page=${page}`,
-        method: 'GET'
+    getAllUsers:builder.query({
+      query:()=>({
+        url:"/auth/get-all-users"
       }),
-    })
+      transformResponse:(response:AxiosResponse)=>response.data
+    }),
+    logoutUser:builder.mutation({
+      query:(_arg)=>({
+        url:"/auth/logout",
+        method:"Post",
+      }),
+      invalidatesTags:["User"]
+    }),
   
 
  })
 });
-export const {useGetUserDataQuery} =userApi
+export const {useGetUserDataQuery,useLogoutUserMutation,useLazyGetAllUsersQuery} =userApi

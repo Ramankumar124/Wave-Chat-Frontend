@@ -17,7 +17,7 @@ export interface contact{
   };
   firebaseToken:string,
 }
-interface User {
+export interface User {
   _id: string;
   name: string;
   email: string;

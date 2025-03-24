@@ -12,6 +12,7 @@ interface contact{
     _id: string;
   };
   firebaseToken:string,
+  createdAt:Date
 }
 interface Notification {
   message:string,
@@ -53,7 +54,6 @@ setNotification:(state,action:PayloadAction<Notification[]>)=>{
 }
 }
 });
-
 
 export  const {setNotification,setOpenChat,addNotification}=chatSlice.actions;
 export  default chatSlice.reducer;

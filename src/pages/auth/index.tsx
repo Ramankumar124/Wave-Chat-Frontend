@@ -41,8 +41,8 @@ const AuthLaout = () => {
           />
           <div className="absolute inset-0 bg-purple-900/30 backdrop-blur-sm flex items-center justify-center">
             <div className="text-center p-8">
-              <h2 className="text-4xl font-bold text-white mb-4">Welcome Back!</h2>
-              <p className="text-gray-200">Secure, Simple, Seamless.</p>
+              <h2 className="text-4xl font-bold text-white mb-4">Welcome Back To WaveChat!</h2>
+              <p className="text-gray-200">Connect, Type, Send.</p>
             </div>
           </div>
         </div>

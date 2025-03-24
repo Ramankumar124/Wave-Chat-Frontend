@@ -24,7 +24,7 @@ Api.interceptors.response.use(
                 return Api(originalRequest);
               } catch (refreshError) {
                 // Redirect to login if refresh fails
-                window.location.href = "/home";
+                window.location.href = "/";
                 return Promise.reject(refreshError);
               }
         }

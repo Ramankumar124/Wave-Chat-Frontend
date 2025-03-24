@@ -3,10 +3,9 @@ import { io } from "socket.io-client";
 // import { userData } from "../../userData";
 import api from "../../api";
 import { Button } from "../ui/button";
-import EmojiPicker from "emoji-picker-react";
-import TypingIndicator from "./TypingIndicator";
+import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
+import TypingIndicator from "../utils/TypingIndicator";
 import Chat from "./Chat";
-import { useUser } from "@/context/UserContext";
 import { Toaster, toast } from "react-hot-toast";
 import Call from "../Call/Call";
 import messageSoundBubble from "../../assets/messageSoundBubble.mp3";
@@ -20,6 +19,9 @@ import { RootState } from "@/redux/store/store";
 import { addNotification, setNotification } from "@/redux/features/chatSlice";
 import Api from "../../api";
 import { AxiosResponse } from "axios";
+import { setIsCallActive, setToggleCallBox } from "@/redux/features/applSlice";
+import ImageSelect from "./ImageSelect";
+import CustomNotificationToast from "../utils/customNotificationToast";
 interface ChatMessage {
   content: string;
   image?: string;
@@ -34,17 +36,17 @@ interface TypingEvent {
 const ChatBox = () => {
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState<ChatMessage[]>([]);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
   const [ShowTyping, setShowTyping] = useState(false);
-  const typingTimeoutRef = useRef(null); // For tracking typing timeout
-  const chatEndRef = useRef(null);
+  const typingTimeoutRef = useRef<number | null>(null); // For tracking typing timeout
+  const chatEndRef = useRef<HTMLDivElement>(null);
   const { socket, isConneted } = useSocket();
   const [page, setpage] = useState(1);
   const [loading, setloading] = useState(true);
 
   const data = useSelector((state: RootState) => state.auth.user);
-
+ const toggleCallBox =useSelector((state:RootState)=>state.app.toggleCallBox)
   const { contactUserData, isOpen } = useSelector(
     (state: RootState) => state.Chat.openChat
   );
@@ -56,6 +58,8 @@ const ChatBox = () => {
   const dispatch = useDispatch();
 
   const audioPlayer = useRef<HTMLAudioElement>(null);
+
+
   useEffect(() => {
     if (data && socket && isConneted) {
       const message = {
@@ -70,6 +74,7 @@ const ChatBox = () => {
       setloading(false);
     }
   }, [data, socket, isConneted]);
+
 
   useEffect(() => {
     if (socket) {
@@ -90,7 +95,6 @@ const ChatBox = () => {
             !receiverId ||
             (receiverId !== senderId && receiverId !== "undefined")
           ) {
-            // alert(`notification: ${message}`);
             let newNotification = {
               message,
               messageTime: new Date(),
@@ -99,72 +103,18 @@ const ChatBox = () => {
             };
             dispatch(addNotification(newNotification));
             toast.custom((t) => (
-              <div
-                className={`${
-                  t.visible ? "animate-enter" : "animate-leave"
-                } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-              >
-                <div className="flex-1 w-0 p-4">
-                  <div className="flex items-start">
-                    <div className=" pt-0.5 w-10 h-10 rounded-full">
-                      <p className="text-xl font-bold w-10 h-10 bg-primary-content flex items-center justify-center rounded-full">
-                        {senderName[0].toUpperCase()}
-                      </p>
-                    </div>
-                    <div className="ml-3 flex-1">
-                      <p className="text-sm font-medium text-gray-900">
-                        {senderName}
-                      </p>
-                      <p className="mt-1 text-sm text-gray-500">{message}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex border-l border-gray-200">
-                  <button
-                    onClick={() => toast.dismiss(t.id)}
-                    className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
+         <CustomNotificationToast senderName={senderName} t={t} message={message} />
             ));
           }
         }
       );
-
       return () => {
         socket.off("notify");
       };
     }
   }, [receiverId]);
 
-  // // Infinite scroll
-  // const chatBoxRef = useRef(null);
-  // const handleInfinityScroll = async () => {
-  //     if (chatBoxRef.current) {
-  //         console.log(chatBoxRef.current.scrollTop);  // Use the ref to access chatBox
-  //     if(chatBoxRef.current.scrollTop==10){
-  //         setTimeout(() => {
-  //         setpage(prev=>prev+1);
 
-  //       }, 10);
-  //       console.log("reached at top ");
-
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //     const chatbox = chatBoxRef.current;
-
-  //     if (chatbox) {
-  //       console.log("scroll hua");
-  //         chatbox.addEventListener("scroll", handleInfinityScroll);
-  //     return () => chatbox.removeEventListener("scroll", handleInfinityScroll);
-
-  //   }
-  // }, [receiverId]);
   useEffect(() => {
     const fetchMessages = async () => {
        setChat([]);
@@ -191,7 +141,7 @@ const ChatBox = () => {
     fetchMessages();
   }, [receiverId]);
 
-  // New useEffect to handle room joining and socket events after data is updated
+
   useEffect(() => {
     if (data && receiverId && socket) {
       socket.emit("join-room", { senderId, receiverId });
@@ -224,18 +174,17 @@ const ChatBox = () => {
           }
         }
       );
-
       socket.on("soundpopup", () => {
         if (audioPlayer.current) {
           audioPlayer.current.play();
         }
       });
 
-      socket.on("Typing", ({ roomId, senderId }: TypingEvent) => {
+      socket.on("Typing", (roomId, IncomingSenderId) => {
         const activeRoomId = [data._id, receiverId].sort().join("_");
-
-        if (senderId !== data._id && roomId === activeRoomId) {
+        if (IncomingSenderId !== data._id && roomId === activeRoomId) {
           setShowTyping(true);
+          console.log("tyoing is comming");
         }
       });
 
@@ -285,18 +234,21 @@ const ChatBox = () => {
   };
 
   // Function to handle image selection
-  const handleImageChange = (event) => {
-    const file = event.target.files[0]; // Get the selected file
+  interface ImageChangeEvent extends React.ChangeEvent<HTMLInputElement> {
+    target: HTMLInputElement & { files: FileList };
+  }
+
+  const handleImageChange = (event: ImageChangeEvent) => {
+    const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setSelectedImage(reader.result); // Set the image data as base64 string
+        setSelectedImage(reader.result as string); // Set the image data as base64 string
       };
       reader.readAsDataURL(file); // Read the file as a Data URL
     }
   };
 
-  // Function to remove selected image
   const removeImage = () => {
     setSelectedImage(null);
   };
@@ -306,16 +258,20 @@ const ChatBox = () => {
     removeImage();
   };
 
-  const onEmojiClick = (emojiData) => {
+
+  const onEmojiClick = (emojiData:EmojiClickData) => {
     setMessage((prevMessage) => prevMessage + emojiData.emoji);
   };
+
 
   const SendTypingIndegator = async () => {
     const roomId = [senderId, receiverId].sort().join("_");
     if (socket) socket.emit("Typing-indicator", roomId, senderId);
+
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
+
 
     // Hide typing indicator after 3 seconds of no typing
     typingTimeoutRef.current = setTimeout(() => {
@@ -324,13 +280,11 @@ const ChatBox = () => {
     }, 1000);
   };
 
-  // socket.on('incomming-call',()=>{
-  //   alert("call a rhi hai");
-  // })
   const handleStartCall = () => {
-    setIsCallActive(true);
-    setToggleCallBox(true);
+    dispatch(setIsCallActive(true));
+    dispatch(setToggleCallBox(true));
   };
+
 
   if (loading) {
     return (
@@ -345,7 +299,7 @@ const ChatBox = () => {
 
   if (!isOpen) {
     return (
-      <div className="w-[80%] h-auto flex justify-center items-center text-black text-8xl">
+      <div className="w-[80%] h-auto flex justify-center  items-center text-black text-8xl ">
         <div className="items-center justify-center flex flex-col text-base-content gap-3">
           <img className="md:w-60  w-40" src={WebsiteLogo} alt="website logo" />
           <h2 className="md:text-4xl text-2xl font-bold ">
@@ -360,56 +314,16 @@ const ChatBox = () => {
   }
   return (
     <>
-      {/* {toggleCallBox && <Call  receiverId={receiverId}/>} */}
+      {toggleCallBox && <Call  receiverId={receiverId}/>}
       {ShowTyping && (
         <div className="absolute left-[60%]  bottom-24 ">
-          <TypingIndicator />{" "}
+
+          <TypingIndicator />
         </div>
       )}
       <audio src={messageSoundBubble} ref={audioPlayer}></audio>
       {selectedImage && (
-        <div className="fixed w-screen h-screen  z-10">
-          <div
-            className="fixed w-auto h-auto max-h-[600px] max-w-[700px] z-10 top-1/2 left-1/2  -translate-x-1/2 -translate-y-1/2  z-100 
-            rounded-2xl bg-gray-700"
-          >
-            {selectedImage && (
-              <div className=" w-full h-full min-w-80 md:px-16 px-4">
-                <div className="flex my-5 items-center justify-start gap-6 ">
-                  <button
-                    onClick={removeImage}
-                    className="  text-gray-300  md:text-6xl text-2xl w-6 h-6 flex items-center justify-center"
-                  >
-                    &times;
-                  </button>
-                  <h2 className="text-base-content md:text-3xl t font-bold">
-                    Send Image
-                  </h2>
-                </div>
-                <img
-                  src={selectedImage}
-                  alt="Selected"
-                  className="w-auto h-auto object-center   object-cover"
-                />
-                <div className="flex mt-5 mb-2">
-                  <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className="bg-transparent text-white w-full outline-none"
-                    placeholder="Add a Caption...."
-                  />
-                  <Button
-                    className="bg-blue-600 hover:bg-blue-700"
-                    onClick={handleImageSend}
-                  >
-                    Send{" "}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+       <ImageSelect data={{ selectedImage, removeImage, message, setMessage, handleImageSend }} />
       )}
 
       <div className="flex flex-col w-[80%] lg:w-2/3 h-full bg-base-200   ">
@@ -439,15 +353,14 @@ const ChatBox = () => {
             {/* <VoiceCall socket={socket} receiverId={receiverId} /> */}
           </div>
         </div>
-
-        {/* Chat Body */}
         <div
-          // ref={chatBoxRef}
           id="chatBox"
           className=" scrollable flex-grow md:p-4  bg-base-100 overflow-y-scroll "
         >
-          {/* chats here  */}
-          <Chat chat={chat} receiverId={receiverId} />
+          <Chat 
+          //@ts-ignore
+          chat={chat} 
+          receiverId={receiverId} />
           <div ref={chatEndRef} />
         </div>
 
@@ -462,12 +375,12 @@ const ChatBox = () => {
               {!ShowEmojiPicker ? (
                 <i className="far fa-smile lg:text-3xl text-xl"></i>
               ) : (
-                <i class="fa-solid fa-xmark text-3xl "></i>
+                <i className="fa-solid fa-xmark text-3xl "></i>
               )}
             </button>
             {ShowEmojiPicker && (
               <div className="absolute top-1/2   left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <EmojiPicker theme="dark" onEmojiClick={onEmojiClick} />
+                <EmojiPicker theme={Theme.DARK} onEmojiClick={onEmojiClick} />
               </div>
             )}
             <button className="lg:p-2 p-1 ">

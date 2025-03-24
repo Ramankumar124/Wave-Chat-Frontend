@@ -24,7 +24,6 @@ useEffect(() => {
 
 const handleChangeTheme = (newTheme:string) => {
 dispatch(setTheme(newTheme))
-// setTheme(newTheme);
 localStorage.setItem('theme', newTheme);
 }
   return (

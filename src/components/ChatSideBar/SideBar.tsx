@@ -16,6 +16,7 @@ interface contact {
     _id: string;
   };
   firebaseToken: string;
+  createdAt:Date
 }
 const main:React.FC = () => {
   const [Contacts, setContacts] = useState<contact[]>([]);
@@ -28,7 +29,7 @@ const main:React.FC = () => {
     
     if (!loader && data?.contacts) {
       console.log(data.contacts);
-      
+      //@ts-ignorets
       setContacts(data.contacts);
     }
     console.log("data from sidebar",data);

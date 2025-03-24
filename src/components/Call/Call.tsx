@@ -6,27 +6,38 @@ import Draggable from "react-draggable";
 import { Toaster, toast } from "react-hot-toast";
 import Resizable from "react-resizable-box";
 import { useSocket } from "@/context/socket";
-const Call = ({ contactUserId }) => {
-  const [user, setuser] = useState();
-  const { data, stream, setstream } = useUser();
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store/store";
+import { setStream } from "@/redux/features/applSlice";
+const Call = ({ receiverId }:{receiverId:string}) => {
+
+
+  // const { data, stream, setstream } = useUser();
+
+
   const [callEnded, setCallEnded] = useState(false);
   const [isMuted, setisMuted] = useState()
  const {socket}=useSocket();
   const vedioRef = useRef(null);
   const peerVideoRef = useRef(null);
+ const [shareScreen, setshareScreen] = useState(false);
+  const dispatch=useDispatch();
+  const data=useSelector((state:RootState)=>state.auth.user);
+  const stream=useSelector((state:RootState)=>state.app.stream);
+  
+
 
   const myPeer = useRef(null);
   const fetchUserFeed = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({
+    const stream =
+    await navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: true,
-    });
-
-    setstream(stream);
-    
+      audio: true, // Set to true if you want to share audio as well
+    })
+    // setstream(stream);
+    dispatch(setStream(stream))
     vedioRef.current.srcObject = stream;
   };
-
   const toggleMute=()=>{
     if(stream){
       const audioTrack=stream.getAudioTracks()[0];
@@ -36,10 +47,10 @@ const Call = ({ contactUserId }) => {
       }
     }
   };
-
   useEffect(() => {
     myPeer.current = new Peer(undefined, {
       host: "wavechat-perjs-server.onrender.com",
+      // host: "localhost",
       secure:true,
       port: 443,
       path: "/myapp",
@@ -49,10 +60,10 @@ const Call = ({ contactUserId }) => {
 
     fetchUserFeed();
 
-    myPeer.current.on("open", (id) => {
+    myPeer.current.on("open", (id:string) => {
       // socket.emit('start-call',id,roomId);
       const roomId = "room123"; // Example room ID
-      socket.emit("join-call-room", contactUserId, roomId, id, data);
+      socket.emit("join-call-room", receiverId, roomId, id, data);
     });
     socket.on("start-call", (userPeerId) => {
       console.log("user is caliing", userPeerId);
@@ -72,7 +83,7 @@ const Call = ({ contactUserId }) => {
     });
   }, []);
 
-  const callUser = (userId) => {
+  const callUser = (userId:string) => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -86,10 +97,10 @@ const Call = ({ contactUserId }) => {
   };
   const EndCall = () => {
     const roomId = "room123"; // Example room ID
-    socket.emit("call-Ended", roomId);
+    socket?.emit("call-Ended", roomId);
   };
 
-  socket.on("send-call-ended", () => {
+  socket?.on("send-call-ended", () => {
     // alert("call ended");
     // toast('Call Ended!', {
     //   icon: '👏',
@@ -131,7 +142,7 @@ const Call = ({ contactUserId }) => {
               onClick={EndCall}
               className="bg-red-500 p-3 rounded-full hover:scale-110 rotate-45  animate-in"
             >
-              <i class="rotate-90 tex-4xl fa-solid fa-phone text-white"></i>
+              <i className="rotate-90 tex-4xl fa-solid fa-phone text-white"></i>
             </button>
           </div>
 
@@ -144,9 +155,12 @@ const Call = ({ contactUserId }) => {
                 className={`p-2 rounded-full w-10 h-10 bg-green-500 hover:bg-opacity-80 text-white`}
               >
                 {isMuted ? 
-                <i class="fa-solid fa-microphone-slash"></i>
-                : <i class="fa-solid fa-microphone"></i>}
+                <i className="fa-solid fa-microphone-slash"></i>
+                : <i className="fa-solid fa-microphone"></i>}
               </button>
+
+
+          
             </div>
         </div>
       </div>

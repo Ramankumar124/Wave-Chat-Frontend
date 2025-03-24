@@ -1,23 +1,22 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route, redirect } from "react-router-dom";
-import Home from "./components/home";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  redirect,
+} from "react-router-dom";
+import Home from "./pages/Home/home";
 import { useEffect } from "react";
 import { onMessage } from "firebase/messaging";
 import { messaging } from "./firebase";
-import { useUser } from "./context/UserContext";
 import { RootState } from "./redux/store/store";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchUserData,
-  removeUserData,
-  setUserData,
-} from "./redux/features/authSlice";
+import { fetchUserData } from "./redux/features/authSlice";
 import AuthLaout from "./pages/auth";
-import axios from "axios";
-import { server } from "./constants/config";
 import { AppDispatch } from "./redux/store/store";
 import { Spinner } from "../Spinner";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { setTheme } from "./redux/features/applSlice";
 
 function App() {
   // const {theme,setTheme} = useUser();
@@ -41,17 +40,17 @@ function App() {
   //   });
   // }, []);
 
-  // useEffect(() => {
-  //   const localTheme = localStorage.getItem('theme');
-  //   if (localTheme) {
-  //     setTheme(localTheme);
-  //   }
-
-  // }, [])
+  useEffect(() => {
+    const localTheme = localStorage.getItem("theme");
+    if (localTheme) {
+      dispatch(setTheme(localTheme));
+    }
+  }, []);
 
   const { user, loader } = useSelector((state: RootState) => state.auth);
 
   const dispatch = useDispatch<AppDispatch>();
+  const theme = useSelector((state: RootState) => state.app.theme);
   useEffect(() => {
     dispatch(fetchUserData());
   }, [dispatch]);
@@ -67,26 +66,27 @@ function App() {
     <>
       <Router>
         <div
-          //  data-theme={theme}
-          data-theme="light"
+          data-theme={theme}
+          // data-theme="light"
           className="App"
         >
           <Routes>
-          <Route path="/" element={
-              <ProtectedRoute user={user}>
-              <Home />
-              </ProtectedRoute>
-              } 
-              />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute user={user}>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/login"
               element={
-                <ProtectedRoute user={!user}  redirect={"/"}>
+                <ProtectedRoute user={!user} redirect={"/"}>
                   <AuthLaout />
                 </ProtectedRoute>
               }
             />
-        
           </Routes>
         </div>
       </Router>
