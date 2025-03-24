@@ -12,9 +12,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Bounce,toast, ToastContainer } from "react-toastify";
+
+
+type AuthPage = 'login' | 'register1' | 'register2' |'forgot-password' | 'otp' | 'reset-password' | 'dashboard' |'verify-forgot-password' |'otp-verifyEmail';
 interface OTPVerificationProps {
   email: string;
-  onPageChange: (page: string) => void;
+  onPageChange: (page: AuthPage) => void;
 }
 
 const OtpVerifyEmail = ({ email, onPageChange }: OTPVerificationProps) => {
@@ -29,7 +32,6 @@ const OtpVerifyEmail = ({ email, onPageChange }: OTPVerificationProps) => {
   const onSubmit = async (data: OtpInput) => {
     const response = await Api.post("/auth/verifyEmail",data);
     if ((response.status = 201)) {
-      console.log("you entered right otp");
       onPageChange("login");
     }
   };
@@ -38,7 +40,6 @@ const OtpVerifyEmail = ({ email, onPageChange }: OTPVerificationProps) => {
     try {
       const response = await Api.post("/auth/resendEmail",email);
 
-      console.log("email send sucessfully");
       toast("Email Resend Successfully");
     } catch (error: any) {
       toast.error(error?.response?.data?.message || error?.message, {

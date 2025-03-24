@@ -55,8 +55,7 @@ const VoiceCall = ({ socket, contactUserId }) => {
 
   const toggleMute = () => {
     const audioTrack = localAudioRef.current.srcObject.getAudioTracks()[0];
-    if (audioTrack) {
-      audioTrack.enabled = !audioTrack.enabled;
+    if ("start-voi      audioTrack.enabled = !audioTrack.enabled;
       setIsMuted(!audioTrack.enabled);
     }
   };

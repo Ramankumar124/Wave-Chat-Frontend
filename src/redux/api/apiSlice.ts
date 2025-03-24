@@ -6,12 +6,7 @@ export const userApi=createApi({
  baseQuery:axiosBaseQuery(),
  tagTypes:["User"],
  endpoints:(builder)=>({
-    getUserData:builder.query({
-        query:()=>({
-          url:"/auth/userData",
-        }),
-        providesTags:["User"]
-    }),
+
     getAllUsers:builder.query({
       query:()=>({
         url:"/auth/get-all-users"
@@ -29,4 +24,4 @@ export const userApi=createApi({
 
  })
 });
-export const {useGetUserDataQuery,useLogoutUserMutation,useLazyGetAllUsersQuery} =userApi
+export const {useLogoutUserMutation,useLazyGetAllUsersQuery} =userApi

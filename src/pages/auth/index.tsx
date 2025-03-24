@@ -28,7 +28,7 @@ const AuthLaout = () => {
           {currentPage === 'forgot-password' && <ForgotPassword onPageChange={handlePageChange} />}
           {currentPage === 'verify-forgot-password' && <VerifyForgotPassword email={email} onPageChange={handlePageChange} />}
           {currentPage === 'reset-password' && <ResetPassword onPageChange={handlePageChange} />}
-          {currentPage === 'otp-verifyEmail' && <OtpVerifyEmail onPageChange={handlePageChange} />}
+          {currentPage === 'otp-verifyEmail' && <OtpVerifyEmail email={email} onPageChange={handlePageChange} />}
 
         </div>
 

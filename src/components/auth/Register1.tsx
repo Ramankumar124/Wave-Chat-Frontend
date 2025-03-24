@@ -5,8 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {z} from "zod"
 
+type AuthPage = 'login' | 'register1' | 'register2' |'forgot-password' | 'otp' | 'reset-password' | 'dashboard' |'verify-forgot-password' |'otp-verifyEmail';
 interface RegisterProps {
-  onPageChange: (page: string, email?: string) => void;
+  onPageChange: (page: AuthPage, email?: string) => void;
   localdata:any,
   setlocaldata:any
 }
@@ -22,10 +23,6 @@ export function Register1({ onPageChange,localdata,setlocaldata }: RegisterProps
     resolver: zodResolver(register1FormSchema),
   });
 
-
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
 
   function passwordToggle(){
     setIsPassword(!isPassword);

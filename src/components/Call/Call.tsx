@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRef } from "react";
 import Peer from "peerjs";
-import { useUser } from "@/context/UserContext";
-import Draggable from "react-draggable";
 import { Toaster, toast } from "react-hot-toast";
 import Resizable from "react-resizable-box";
 import { useSocket } from "@/context/socket";
@@ -11,32 +9,27 @@ import { RootState } from "@/redux/store/store";
 import { setStream } from "@/redux/features/applSlice";
 const Call = ({ receiverId }:{receiverId:string}) => {
 
-
-  // const { data, stream, setstream } = useUser();
-
-
   const [callEnded, setCallEnded] = useState(false);
-  const [isMuted, setisMuted] = useState()
+  const [isMuted, setisMuted] = useState<boolean>(false);
  const {socket}=useSocket();
-  const vedioRef = useRef(null);
-  const peerVideoRef = useRef(null);
- const [shareScreen, setshareScreen] = useState(false);
+  const vedioRef = useRef<HTMLVideoElement>(null);
+  const peerVideoRef = useRef<HTMLVideoElement>(null);
   const dispatch=useDispatch();
   const data=useSelector((state:RootState)=>state.auth.user);
   const stream=useSelector((state:RootState)=>state.app.stream);
-  
-
-
-  const myPeer = useRef(null);
+  const myPeer = useRef<Peer | null>(null);
   const fetchUserFeed = async () => {
     const stream =
     await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true, // Set to true if you want to share audio as well
     })
-    // setstream(stream);
     dispatch(setStream(stream))
-    vedioRef.current.srcObject = stream;
+        if (vedioRef.current) {
+          vedioRef.current.srcObject = stream;
+        }
+      
+    
   };
   const toggleMute=()=>{
     if(stream){
@@ -48,25 +41,23 @@ const Call = ({ receiverId }:{receiverId:string}) => {
     }
   };
   useEffect(() => {
-    myPeer.current = new Peer(undefined, {
+    myPeer.current = new Peer("", {
       host: "wavechat-perjs-server.onrender.com",
-      // host: "localhost",
-      secure:true,
+      secure: true,
       port: 443,
+      // host: "localhost",
+      // secure: false,
+      // port:9000,
       path: "/myapp",
     });
-    // console.log("new peer",newPeer);
-    console.log(socket);
-
     fetchUserFeed();
 
     myPeer.current.on("open", (id:string) => {
-      // socket.emit('start-call',id,roomId);
-      const roomId = "room123"; // Example room ID
-      socket.emit("join-call-room", receiverId, roomId, id, data);
+      const roomId ="Room@123";
+      socket?.emit("join-call-room", receiverId, roomId, id, data);
     });
-    socket.on("start-call", (userPeerId) => {
-      console.log("user is caliing", userPeerId);
+    socket?.on("start-call", (userPeerId) => {
+    
       callUser(userPeerId);
     });
     myPeer.current.on("call", (call) => {
@@ -74,10 +65,13 @@ const Call = ({ receiverId }:{receiverId:string}) => {
         .getUserMedia({ video: true, audio: true })
         .then((stream) => {
           call.answer(stream);
-          vedioRef.current.srcObject = stream;
-
+          if (vedioRef.current) {
+            vedioRef.current.srcObject = stream;
+          }
           call.on("stream", (userVideoStream) => {
-            peerVideoRef.current.srcObject = userVideoStream;
+            if (peerVideoRef.current) {
+              peerVideoRef.current.srcObject = userVideoStream;
+            }
           });
         });
     });
@@ -87,34 +81,39 @@ const Call = ({ receiverId }:{receiverId:string}) => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        vedioRef.current.srcObject = stream;
-        const call = myPeer.current.call(userId, stream);
 
-        call.on("stream", (userVideoStream) => {
-          peerVideoRef.current.srcObject = userVideoStream;
-        });
+        if (vedioRef.current) {
+          vedioRef.current.srcObject = stream;
+        }
+        if (myPeer.current) {
+          const call = myPeer.current.call(userId, stream);
+
+          call.on("stream", (userVideoStream) => {
+            if (peerVideoRef.current) {
+              peerVideoRef.current.srcObject = userVideoStream;
+              setcallText("");
+            }
+          });
+        }
       });
   };
   const EndCall = () => {
-    const roomId = "room123"; // Example room ID
+    const roomId = "Room@123"; // Example room ID
     socket?.emit("call-Ended", roomId);
   };
-
   socket?.on("send-call-ended", () => {
-    // alert("call ended");
-    // toast('Call Ended!', {
-    //   icon: '👏',
-    // });
     setCallEnded(true);
-    peerVideoRef.current.srcObject = null;
-    // location.reload();
+    if (peerVideoRef.current) {
+      peerVideoRef.current.srcObject = null;
+    }
+    location.reload();
     setTimeout(() => {
       location.reload();
     }, 5000);
   });
   return (
+    //@ts-ignore
     <Resizable>
-    {/* <Draggable> */}
      
       <div className="z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[60%] md:w-[800px] md:h-[800px] flex bg-gray-600 ">
         <Toaster />
@@ -137,6 +136,7 @@ const Call = ({ receiverId }:{receiverId:string}) => {
               autoPlay
             ></video> 
           </div>
+        
           <div className="absolute bottom-9 right-1/2 ml-9">
             <button
               onClick={EndCall}
@@ -147,7 +147,7 @@ const Call = ({ receiverId }:{receiverId:string}) => {
           </div>
 
           <div className="absolute top-1/2 right-1/2 lg-translate-x-1/2 -translate-y-1/2  text-white">
-            {callEnded && <p> Call Is Ended Now </p>}
+            {callEnded && <p className="text-4xl"> Call Is Ended Now </p>}
           </div>
           <div className="absolute bottom-9 left-[10%] md:left-[30%]  ">
               <button
@@ -164,7 +164,6 @@ const Call = ({ receiverId }:{receiverId:string}) => {
             </div>
         </div>
       </div>
-    {/* </Draggable>z` */}
       </Resizable>
   );
 };

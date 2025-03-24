@@ -50,8 +50,6 @@ useEffect(() => {
   }
 }, [selectedImage])
 
-
-  // const { data,setUserData } = useUser();
   const data=useSelector((state:RootState)=>state.auth.user)
   return (
     <Sheet>
@@ -126,11 +124,14 @@ useEffect(() => {
           </p>
           <div className="flex flex-col items-center">
             <p className="text-base">
-              {new Date(data?.createdAt).toLocaleDateString("en-us", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })}
+              
+              {data?.createdAt
+                ? new Date(data.createdAt).toLocaleDateString("en-us", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })
+                : "N/A"}
             </p>
             <p className="text-gray-400 text-sm">Joined</p>
           </div>

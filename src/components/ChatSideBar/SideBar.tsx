@@ -25,15 +25,11 @@ const main:React.FC = () => {
   const { socket } = useSocket();
   const data=user;
   useEffect(() => {
-    console.log(data);
     
     if (!loader && data?.contacts) {
-      console.log(data.contacts);
       //@ts-ignorets
       setContacts(data.contacts);
-    }
-    console.log("data from sidebar",data);
-    
+    }    
   }, [data]);
   useEffect(() => {
     if (socket) {

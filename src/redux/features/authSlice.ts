@@ -35,6 +35,7 @@ export interface User {
     url: string;
     _id: string;
   };
+  createdAt:Date
 }
 
 interface AuthSliceState {

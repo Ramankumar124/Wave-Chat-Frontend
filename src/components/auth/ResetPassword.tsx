@@ -6,8 +6,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast, { Toaster } from "react-hot-toast";
 
+type AuthPage = 'login' | 'register1' | 'register2' |'forgot-password' | 'otp' | 'reset-password' | 'dashboard' |'verify-forgot-password' |'otp-verifyEmail';
 interface ResetPasswordProps {
-  onPageChange: (page: string) => void;
+  onPageChange: (page: AuthPage) => void;
 }
 
 export const ResetPasswordSchema = z

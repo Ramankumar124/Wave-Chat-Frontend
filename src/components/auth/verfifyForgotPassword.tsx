@@ -12,9 +12,12 @@ import { otpSchema,OtpInput } from '@/lib/Schemas/authSchemas';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast, { Toaster } from 'react-hot-toast';
+
+
+type AuthPage = 'login' | 'register1' | 'register2' |'forgot-password' | 'otp' | 'reset-password' | 'dashboard' |'verify-forgot-password' |'otp-verifyEmail';
 interface OTPVerificationProps {
   email: string;
-  onPageChange: (page: string) => void;
+  onPageChange: (page: AuthPage) => void;
 }
 
 const VerifyForgotPassword=({ email, onPageChange }: OTPVerificationProps) =>{

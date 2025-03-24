@@ -105,7 +105,6 @@ const UserAddBox = () => {
         if (suggestedUsers) {
           setusers(suggestedUsers);
           setFilteredusers(suggestedUsers);
-          console.log(users);
         }
       }
     } catch (error: any) {

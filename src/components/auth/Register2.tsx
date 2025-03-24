@@ -7,8 +7,9 @@ import { useForm } from "react-hook-form";
 import { Bounce, ToastContainer,toast } from "react-toastify";
 import { z } from "zod";
 
+type AuthPage = 'login' | 'register1' | 'register2' |'forgot-password' | 'otp' | 'reset-password' | 'dashboard' |'verify-forgot-password' |'otp-verifyEmail';
 interface RegisterProps {
-  onPageChange: (page: string, email?: string) => void;
+  onPageChange: (page: AuthPage, email?: string) => void;
   localdata:any,
   setlocaldata:any
 }
@@ -29,7 +30,6 @@ const Register2 = ({ onPageChange ,localdata,setlocaldata}: RegisterProps) => {
     // Update localdata with Register2 form data
     const updatedData = { ...localdata, ...data };
     setlocaldata(updatedData);
-    console.log(updatedData);
     
     // Check if all required data is present
     if (updatedData.email && updatedData.password && updatedData.name && updatedData.bio && updatedData.avatar) {
@@ -48,7 +48,6 @@ const Register2 = ({ onPageChange ,localdata,setlocaldata}: RegisterProps) => {
               "Content-Type": "multipart/form-data", // Set the content type
             },});
         
-          console.log("Registration successful!",response);
           onPageChange("otp-verifyEmail", updatedData.email); // Navigate to OTP page
         
       } catch (error:any) {
@@ -79,10 +78,6 @@ const Register2 = ({ onPageChange ,localdata,setlocaldata}: RegisterProps) => {
       trigger("avatar"); // Trigger validation for the avatar field
     }
   };
-
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
 
   return (
     <div>

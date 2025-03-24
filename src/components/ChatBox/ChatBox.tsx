@@ -184,7 +184,6 @@ const ChatBox = () => {
         const activeRoomId = [data._id, receiverId].sort().join("_");
         if (IncomingSenderId !== data._id && roomId === activeRoomId) {
           setShowTyping(true);
-          console.log("tyoing is comming");
         }
       });
 

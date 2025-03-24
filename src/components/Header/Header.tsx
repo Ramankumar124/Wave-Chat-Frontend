@@ -14,6 +14,7 @@ import { useLogoutUserMutation } from "@/redux/api/apiSlice";
 import { getToken } from "firebase/messaging";
 import { messaging } from "@/firebase";
 import Api from "@/api";
+import toast, { Toaster } from "react-hot-toast";
 const Header = () => {
   async function requestPermission() {
     const permission = await Notification.requestPermission();
@@ -23,12 +24,10 @@ const Header = () => {
         vapidKey:
           "BApqSCZ8GP01NlRztqshlwYKnKW-HoRPFVMtVismbf4DaoqmusYlDAwXKUwJIiizpWS1Nf6LKgH36bRm9rgeEV8",
       });
-      console.log("Token Gen", FBtoken);
       try {
         const response = await Api.post("/Notification/storeToken", {
           FBtoken,
         });
-        console.log(response);
       } catch (error) {
         console.log(error);
       }
@@ -45,19 +44,32 @@ const Header = () => {
   const notification = useSelector(
     (state: RootState) => state.Chat.notifications
   );
-  const audioPlayer = useRef(null);
+  const audioPlayer = useRef<HTMLAudioElement>(null);
   const [incomingCall, setIncomingCall] = useState(false); // State to control popup visibility
-  const [icomingCalldata, seticomingCalldata] = useState();
+  interface IncomingCallData {
+    _id: string;
+    name: string;
+    // Add other properties if needed
+  }
+
+  const [icomingCalldata, seticomingCalldata] =
+    useState<IncomingCallData | null>(null);
   const { socket } = useSocket();
   const dispatch = useDispatch();
   const { isCallActive, stream, toggleCallBox } = useSelector(
     (state: RootState) => state.app
   );
+
+  const openChat = useSelector((state: RootState) => state?.Chat?.openChat);
+  let receiverId = openChat.contactUserData._id;
+
   const [logoutUser, { isLoading, isError, error }] = useLogoutUserMutation();
 
   useEffect(() => {
     function playAudio() {
-      audioPlayer.current.play();
+      if (audioPlayer.current) {
+        audioPlayer.current.play();
+      }
     }
     if (notification.length > 0) playAudio();
     console.log("notification ", notification);
@@ -65,13 +77,12 @@ const Header = () => {
 
   useEffect(() => {
     if (socket) {
-      const handleIncomingCall = (icomingCalldata) => {
+      const handleIncomingCall = (icomingCalldata: any) => {
         setIncomingCall(true);
         seticomingCalldata(icomingCalldata);
       };
       const handleCallRejected = async () => {
         location.reload();
-        console.log("call declined");
         setIncomingCall(false);
         dispatch(setToggleCallBox(false));
         stopMediaStream();
@@ -88,24 +99,20 @@ const Header = () => {
   }, [socket]);
 
   const handleAnswerCall = () => {
-    console.log("icomingCalldata header", icomingCalldata);
     setIncomingCall(false); // Hide popup after answering
     dispatch(setToggleCallBox(true));
-    // setToggleCallBox(true);
-    // Add your answer call logic here
-    console.log(stream);
+  
   };
 
   const handleRejectCall = () => {
-    socket?.emit("call-declined", icomingCalldata._id);
+    socket?.emit("call-declined", icomingCalldata?._id);
     setIncomingCall(false); // Hide popup after answering
   };
 
   const stopMediaStream = () => {
     if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
+      stream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
       dispatch(setStream(null));
-      // setstream(null);
     }
   };
 
@@ -115,18 +122,19 @@ const Header = () => {
   };
   return (
     <div className="  w-full h-auto bg-base-200  text-3xl flex justify-between items-center">
+      <Toaster/>
       <img className=" h-16" src={WebsiteLogo} alt="" />
-      {toggleCallBox && !isCallActive && <Call socket={socket} />}
+      {toggleCallBox && !isCallActive && <Call receiverId={receiverId} />}
       {/* Incoming Call Popup */}
       {incomingCall && (
         <div className="fixed top-5 left-1/2 transform -translate-x-1/2 p-4  bg-[#363F48] text-white rounded-xl shadow-lg text-center">
           <div className="w-full h-1/2 flex items-center gap-3">
-            <div className="imagecontainer w-12 h-12 rounded-full bg-yellow-400">
+            <div className="imagecontainer w-12 h-12 rounded-full bg-primary-content flex justify-center items-center">
               {/* <img src="" alt="" /> */}
-              {/* <p className="text-white text-3xl">  <IoCallSharp /></p> */}
+              <p className="text-primary textt-3xl">{icomingCalldata?.name[0].toUpperCase()}</p>
             </div>
             <div className="flex flex-col items-start">
-              <p className="text-2xl font-bold">{icomingCalldata.name}</p>
+              <p className="text-2xl font-bold">{icomingCalldata?.name}</p>
               <p className="text-sm font-semibold ml-2">Is now Calling..</p>
             </div>
           </div>

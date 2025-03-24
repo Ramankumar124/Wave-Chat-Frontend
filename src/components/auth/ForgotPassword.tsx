@@ -6,8 +6,10 @@ import {z} from "zod"
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { ForgotPasswordInputs, ForgotPasswordSchema } from '@/lib/Schemas/authSchemas';
+
+type AuthPage = 'login' | 'register1' | 'register2' |'forgot-password' | 'otp' | 'reset-password' | 'dashboard' |'verify-forgot-password' |'otp-verifyEmail';
 interface ForgotPasswordProps {
-  onPageChange: (page: string, email?: string) => void;
+  onPageChange: (page: AuthPage, email?: string) => void;
 }
 
 export function ForgotPassword({ onPageChange }: ForgotPasswordProps) {
@@ -20,13 +22,12 @@ export function ForgotPassword({ onPageChange }: ForgotPasswordProps) {
       resolver: zodResolver(ForgotPasswordSchema),
     });
   const onSubmit =async (data:ForgotPasswordInputs) => {
-    console.log(data);
     
     try {
         const response=await Api.post("/auth/forgotPassword",data);
         if(response.status==200){
             onPageChange('verify-forgot-password', email);
-            console.log("verfication mail sended");
+        
             toast("Otp Send Succesfully");  
         }
 
