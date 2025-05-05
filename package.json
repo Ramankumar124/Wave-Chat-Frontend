@@ -59,7 +59,9 @@
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.2",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vite-plugin-pwa": "^1.0.0"
+
   },
   "proxy": "https://wave-chat-rho.vercel.app"
 }

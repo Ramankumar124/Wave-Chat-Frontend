@@ -41,7 +41,7 @@ const ContactProfile = ({contactUserData}:{contactUserData:contact}) => {
         <VisuallyHidden>
           <DialogTitle>Hidden Dialog Title</DialogTitle>
         </VisuallyHidden>
-        <DialogContent className=" fixed z-50 p-3  w-80 h-auto md:w-[500px] md:h-[700px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center bg-[#222222] text-base-content gap-3" >
+        <DialogContent className=" fixed z-50 p-3  w-80 h-auto md:w-[500px] md:h-[700px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center bg-base-300 text-base-content gap-3" >
         
         <div className="absolute right-4 top-4"><DialogClose>
         <i className="fa-solid fa-xmark"></i>
@@ -49,7 +49,7 @@ const ContactProfile = ({contactUserData}:{contactUserData:contact}) => {
           </DialogClose></div>
          <div
                   id="userImage"
-                  className=" md:h-60 md:w-60 h-40 w-40 rounded-full border-4 border-white  mt-11 relative"
+                  className=" md:h-60 md:w-60 h-20 w-20 rounded-full shadow-2x border-white  mt-11 relative"
                 >
                   <img
                     className="w-full h-full rounded-full object-cover"
@@ -59,7 +59,6 @@ const ContactProfile = ({contactUserData}:{contactUserData:contact}) => {
                 </div>
                 <div className="flex flex-col items-center">
                     <p className="text-3xl">{contactUserData?.name}</p>
-          
                   </div>
                 <div className="bio  flex flex-col items-center">
                   <p className="italic">{contactUserData?.bio}</p>

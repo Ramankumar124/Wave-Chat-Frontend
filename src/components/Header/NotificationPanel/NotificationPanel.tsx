@@ -14,9 +14,7 @@ const NotificationPanel = () => {
   useEffect(() => {
     // Fetch notifications from localStorage on component mount
     const storedNotifications = localStorage.getItem("notifications");
-    if (storedNotifications) {
-      console.log(JSON.parse(storedNotifications));
-      
+    if (storedNotifications) {      
       dispatch(setNotification(JSON.parse(storedNotifications)));
     }
   }, []);
@@ -78,9 +76,9 @@ const NotificationPanel = () => {
 
       {/* Notification Panel */}
       {isOpen && (
-        <div className="fixed left-10 md:absolute  md:right-0 md:-left-64  mt-2 w-80 bg-black text-white rounded-lg shadow-lg z-10 ">
-          <div className=" flex  justify-between items-center p-4 border-b border-gray-700">
-            <h3 className="font-semibold">Notifications</h3>
+        <div className="fixed  right-0 md:absolute md:-left-64  mt-2 w-60  md:w-80 bg-black text-white rounded-lg shadow-lg z-10 ">
+          <div className=" flex  justify-between items-center p-2 md:p-4 border-b border-gray-700">
+            <h3 className="font-semibold text-sm">Notifications</h3>
             <button
               className="text-gray-400 hover:text-gray-200"
               onClick={() => setIsOpen(false)}
@@ -88,7 +86,7 @@ const NotificationPanel = () => {
               &times;
             </button>
           </div>
-          <div className="p-4 space-y-4 overflow-y-scroll max-h-96">
+          <div className="md:p-4 p-2  space-y-4 overflow-y-scroll max-h-96">
             {Object.keys(groupedNotifications).map((label, dateIndex) => (
               <div key={dateIndex}>
                 {/* Date Header */}
@@ -99,11 +97,11 @@ const NotificationPanel = () => {
                     <div
                       onClick={() => openChatFromNotification(item.userId)}
                       key={index}
-                      className="p-2 bg-gray-800  rounded-lg flex justify-between items-start "
+                      className="p-1 md:p-2 px-2 bg-gray-800  rounded-lg flex justify-between items-start "
                     >
                       <div>
-                        <p className="text-lg">{item.title}</p>
-                        <p className="text-gray-400 text-lg">{item.message}</p>
+                        <p className="md:text-lg text-xs">{item.title}</p>
+                        <p className="text-gray-400 md:text-lg text-sm">{item.message}</p>
                       </div>
                       <span className="text-gray-400 text-xs">
                         {new Date(item.messageTime).toLocaleTimeString([], {

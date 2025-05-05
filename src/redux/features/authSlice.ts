@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {createApi,fetchBaseQuery} from "@reduxjs/toolkit/query/react"
-import axiosBaseQuery from "../api/baseQuery"
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import axiosBaseQuery from "../api/baseQuery";
 import axios from "axios";
 import { server } from "@/constants/config";
+import Api from "@/api";
 
-export interface contact{
-  _id:string,
+export interface contact {
+  _id: string;
   name: string;
   email: string;
   bio?: string;
@@ -15,7 +16,7 @@ export interface contact{
     url: string;
     _id: string;
   };
-  firebaseToken:string,
+  firebaseToken: string;
 }
 export interface User {
   _id: string;
@@ -35,7 +36,7 @@ export interface User {
     url: string;
     _id: string;
   };
-  createdAt:Date
+  createdAt: Date;
 }
 
 interface AuthSliceState {
@@ -49,16 +50,16 @@ const initialState: AuthSliceState = {
 };
 
 export const fetchUserData = createAsyncThunk(
-  'auth/fetchUserData',
+  "auth/fetchUserData",
   async () => {
-    const response = await axios.get(`${server}/api/v1/auth/getUserData`, { withCredentials: true });
-    console.log(response.data);
-    
-    return response.data.data; // This will be the payload of the fulfilled action
+    const response = await Api.get(`/auth/getUserData`, {
+      withCredentials: true,
+    });
+    return response.data.data;
   }
 );
 
- export const authSlice = createSlice({
+export const authSlice = createSlice({
   initialState,
   name: "auth",
   reducers: {
@@ -82,9 +83,9 @@ export const fetchUserData = createAsyncThunk(
       })
       .addCase(fetchUserData.rejected, (state) => {
         state.loader = false; // Data fetching failed
-        state.user = null;    // Clear user data
+        state.user = null; // Clear user data
       });
   },
 });
 
-export const {setUserData,removeUserData} =authSlice.actions
+export const { setUserData, removeUserData } = authSlice.actions;

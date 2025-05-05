@@ -27,12 +27,10 @@ export function ForgotPassword({ onPageChange }: ForgotPasswordProps) {
         const response=await Api.post("/auth/forgotPassword",data);
         if(response.status==200){
             onPageChange('verify-forgot-password', email);
-        
             toast("Otp Send Succesfully");  
         }
 
     } catch (error:any) {
-        console.log(error);
         toast.error("Unable to Send Reset Link");
     }
   };

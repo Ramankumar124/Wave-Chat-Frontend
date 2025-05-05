@@ -46,7 +46,9 @@ export function ResetPassword({ onPageChange }: ResetPasswordProps) {
         onPageChange("login");
       }
     } catch (error: any) {
-      console.log(error);
+      toast.error("unable to change password");
+
+
     }
   };
 

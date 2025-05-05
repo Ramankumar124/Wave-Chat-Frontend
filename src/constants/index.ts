@@ -6,6 +6,13 @@ export const THEMES = [
     "bumblebee",
     "emerald",
     "corporate",
+    "lemonade",
+    "night",
+    "coffee",
+    "winter",
+    "dim",
+    "nord",
+    "sunset",
     "synthwave",
     "retro",
     "cyberpunk",
@@ -25,12 +32,6 @@ export const THEMES = [
     "autumn",
     "business",
     "acid",
-    "lemonade",
-    "night",
-    "coffee",
-    "winter",
-    "dim",
-    "nord",
-    "sunset",
+
   ];
   

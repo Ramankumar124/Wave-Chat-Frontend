@@ -12,15 +12,12 @@ const PREVIEW_MESSAGES = [
   { id: 2, content: "I'm doing great! Just working on some new features.", isSent: true },
 ];
 
-const SettingsPage = () => {
-//   const { theme, setTheme } = useThemeStore();
+const   SettingsPage = () => {
 const theme=useSelector((state:RootState)=>state.app.theme);
 const dispatch=useDispatch();
-// const { theme, setTheme } = useUser();
 const [toggleSetting, settoggleSetting] = useState(false);
-useEffect(() => {
-  console.log("theme changed to ", theme)
-}, [theme])
+
+
 
 const handleChangeTheme = (newTheme:string) => {
 dispatch(setTheme(newTheme))
@@ -28,10 +25,14 @@ localStorage.setItem('theme', newTheme);
 }
   return (
     <div>
-      <button onClick={()=>settoggleSetting(!toggleSetting)} ><i className="fa-solid fa-gear md:text-4xl text-xl "></i></button>
+      <button onClick={()=>settoggleSetting(!toggleSetting)} >
+        <div className="flex gap-2 items-center">
+        <i className="fa-solid fa-gear md:text-4xl text-xl "></i>
+        </div>
+        </button>
 
-  { toggleSetting && <div className="fixed  inset-0 md:inset-10 z-50">
-    <div data-theme={theme} className="md:w-[80%] w-[100%]  px-4 container mx-auto  pt-4 max-w-5xl ">
+  { toggleSetting && <div className="fixed  w-screen h-screen top-0 left-0 md:inset-10 z-50">
+    <div data-theme={theme} className="md:w-[80%] w-[100%]    px-4 container mx-auto  pt-4 max-w-5xl ">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-1">

@@ -54,14 +54,14 @@ const main:React.FC = () => {
   }, [socket, data]);
 
   return (
-    <div className="lg:w-1/3 h-full w-[20%] flex border-gray-500 bg-base-300   ">
+    <div className="lg:w-1/4 w-[20%] h-full flex border-gray-500 bg-base-300   ">
       <div id="mainChat" className="w-full h-full flex flex-col items">
         <div
           id="topBar"
           className=" lg:p-3 lg:px-8  flex justify-between text-2xl font-bold "
         >
-          <p className="lg:text-lg text-sm p-2 ml-3 ">Chats</p>
-          <div className="flex gap-4"></div>
+          <p className="lg:text-lg text-sm p-2 md:ml-3 ">Chats</p>
+         
         </div>
         <div className="flex-grow overflow-y-auto">
           {Contacts?.map((user: contact) => (
@@ -70,18 +70,18 @@ const main:React.FC = () => {
               onClick={() =>
                 dispatch(setOpenChat({ isOpen: true, contactUserData: user }))
               }
-              className="flex items-center p-4  cursor-pointer"
+              className="flex items-center p-4   cursor-pointer"
             >
-              <div className="lg:w-14 lg:h-14 w-12 h-12 relative rounded-full flex-shrink-0  items-center justify-center mb-2">
+              <div className="lg:w-14 lg:h-14 w-8 h-8 relative rounded-full flex-shrink-0  items-center justify-center mb-2">
                 <img
                   className="w-full h-full rounded-full object-cover  "
                   src={user?.avatar.url}
                   alt="user image"
                 />
                 {user.isOnline && (
-                  <div className="absolute right-0 top-0 bg-green-500 h-3 w-3 rounded-full "></div>
+                  <div className="absolute right-0 top-0 bg-green-500 md:h-3 md:w-3 h-2 w-2 rounded-full "></div>
                 )}
-                <div className="text-xs  text-center md:hidden">
+                <div className="text-[10px]  text-center md:hidden">
                   {user.name}
                 </div>
               </div>

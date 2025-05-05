@@ -17,6 +17,7 @@ import { AppDispatch } from "./redux/store/store";
 import { Spinner } from "../Spinner";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { setTheme } from "./redux/features/applSlice";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   // const {theme,setTheme} = useUser();
@@ -67,9 +68,9 @@ function App() {
       <Router>
         <div
           data-theme={theme}
-          // data-theme="light"
           className="App"
         >
+          <Toaster/>
           <Routes>
             <Route
               path="/"

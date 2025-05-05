@@ -27,41 +27,28 @@ const VerifyForgotPassword=({ email, onPageChange }: OTPVerificationProps) =>{
   })
 
   const onSubmit=async(data:OtpInput)=>{
-    console.log(data);
     
     try {
      const response=await Api.post('/auth/verifyForgotPasswordOtp',data)
-  console.log(response);
   
      if(response.status===201){
-     console.log( "you entered right otp");
      onPageChange('reset-password');
      }
     } catch (error) {
-      console.log(error);
-      
+      toast.error("Unable to Reset Password")
     }
   }
 
   const resendOtpHandler=async()=>{
     try {
       const response= await Api.post("/auth/resendEmail",{email})
-      if(response.status==204){
-        console.log("email send sucessfully");
-        toast("Email Resend Successfully")
-      }
-      else{
-        toast("Unable to Resend otp")
-      }
+      toast("Email Resend Successfully")
     } catch (error:any) {
-      console.log(error);
-      
+      toast("Unable to Resend otp")
     }
   }
-  useEffect(() => {
-console.log(errors);
-  }, [errors])
-  
+    
+      
   return (
     <div className="space-y-6">
       <Toaster/>

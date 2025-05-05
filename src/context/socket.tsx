@@ -7,10 +7,8 @@ interface SocketContextType {
   isConneted:boolean
 }
 
-// Create a context with the correct type
 const SocketContext = createContext<SocketContextType | null>(null);
 
-// Provider for managing Socket.IO connection
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConneted, setisConneted] = useState(false);
@@ -24,16 +22,14 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     setSocket(socketInstance);
     socketInstance.on("connect", () => {
-      console.log("Socket.IO connected:", socketInstance.id);
       setisConneted(true);
     });
 
     socketInstance.on("disconnect", () => {
-      console.log("Socket.IO disconnected");
       setisConneted(false);
     });
 
-    // Cleanup on unmount
+    
     return () => {
       socketInstance.disconnect();
     };

@@ -29,9 +29,8 @@ const Header = () => {
           FBtoken,
         });
       } catch (error) {
-        console.log(error);
+        toast.error("Firebaes notification Error");
       }
-      // Send this token  to server ( db)
     } else if (permission === "denied") {
       alert("You denied for the notification");
     }
@@ -72,7 +71,6 @@ const Header = () => {
       }
     }
     if (notification.length > 0) playAudio();
-    console.log("notification ", notification);
   }, [notification]);
 
   useEffect(() => {
@@ -101,7 +99,6 @@ const Header = () => {
   const handleAnswerCall = () => {
     setIncomingCall(false); // Hide popup after answering
     dispatch(setToggleCallBox(true));
-  
   };
 
   const handleRejectCall = () => {
@@ -118,12 +115,21 @@ const Header = () => {
 
   const handleLogout = async () => {
     await logoutUser(null);
-    if (isError) console.log(error);
+    window.location.reload();
   };
   return (
-    <div className="  w-full h-auto bg-base-200  text-3xl flex justify-between items-center">
-      <Toaster/>
-      <img className=" h-16" src={WebsiteLogo} alt="" />
+    <div className="  w-[100%] h-[5%] md:h-[10%] bg-base-200  text-3xl flex justify-between items-center ">
+      <Toaster
+        toastOptions={{
+          // Ensure toasts have unique IDs to prevent duplicates
+          id: (id) => id,
+          // Limit the number of toasts shown at once
+          maxToasts: 3,
+          // Prevent duplicate toasts
+          duration: 5000,
+        }}
+      />
+      <img className=" md:h-16 h-8" src={WebsiteLogo} alt="" />
       {toggleCallBox && !isCallActive && <Call receiverId={receiverId} />}
       {/* Incoming Call Popup */}
       {incomingCall && (
@@ -131,7 +137,9 @@ const Header = () => {
           <div className="w-full h-1/2 flex items-center gap-3">
             <div className="imagecontainer w-12 h-12 rounded-full bg-primary-content flex justify-center items-center">
               {/* <img src="" alt="" /> */}
-              <p className="text-primary textt-3xl">{icomingCalldata?.name[0].toUpperCase()}</p>
+              <p className="text-primary textt-3xl">
+                {icomingCalldata?.name[0].toUpperCase()}
+              </p>
             </div>
             <div className="flex flex-col items-start">
               <p className="text-2xl font-bold">{icomingCalldata?.name}</p>
@@ -154,23 +162,61 @@ const Header = () => {
         </div>
       )}
       <audio ref={audioPlayer} src={NotificationSound}></audio>
-      <div className=" flex mr-2 md:mr-7 gap-3 md:gap-5">
-        <div>
-          <UserAddBox />
-        </div>
-        <div>
-          <SettingsPage />
-        </div>
+      <div className="flex mr-2 md:mr-7 gap-3 md:gap-5 items-center">
+        {/* NotificationPanel always visible */}
         <div>
           <NotificationPanel />
         </div>
-        <div>
-          <UserProfile />
+        <div className="">
+          <SettingsPage />
         </div>
-        <div>
-          <button onClick={handleLogout}>
-            <i className="fa-solid fa-arrow-right-from-bracket text-xl md:text-3xl"></i>
-          </button>
+        {/* Desktop view - show all buttons */}
+        <div className="hidden md:flex gap-5  ">
+          <div>
+            <UserAddBox />
+          </div>
+          <div>
+            <UserProfile />
+          </div>
+          <div>
+            <button onClick={handleLogout}>
+              <i className="fa-solid fa-arrow-right-from-bracket text-xl md:text-3xl"></i>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile view - show dropdown */}
+        <div className="md:hidden">
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} role="button" className="m-1">
+              <i className="fa-solid fa-ellipsis-vertical text-xl"></i>
+            </div>
+            <ul
+              tabIndex={0}
+              className="dropdown-content z-[1] menu p-2 shadow bg-base-300  rounded-box w-52"
+            >
+              <li>
+                <div className="w-full flex items-center  ">
+                  <UserAddBox />
+                </div>
+              </li>
+
+              <li>
+                <div className="w-full flex items-center">
+                  <UserProfile />
+                </div>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                  <span>Logout</span>
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

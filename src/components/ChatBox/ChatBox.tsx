@@ -298,14 +298,14 @@ const ChatBox = () => {
 
   if (!isOpen) {
     return (
-      <div className="w-[80%] h-auto flex justify-center  items-center text-black text-8xl ">
+      <div className="w-3/4 h-full flex justify-center  items-center text-black text-8xl ">
         <div className="items-center justify-center flex flex-col text-base-content gap-3">
-          <img className="md:w-60  w-40" src={WebsiteLogo} alt="website logo" />
-          <h2 className="md:text-4xl text-2xl font-bold ">
+          <img className="md:w-60 w-40" src={WebsiteLogo} alt="website logo" />
+          <h2 className="md:text-4xl text-xl font-bold text-center ">
             Welcome To WaveChat!
           </h2>
           <p className="md:text-lg text-sm text-center">
-            Select a conversation from the sidebar to start hatting
+            Select a conversation from the sidebar to start Chatting
           </p>
         </div>
       </div>
@@ -325,12 +325,12 @@ const ChatBox = () => {
        <ImageSelect data={{ selectedImage, removeImage, message, setMessage, handleImageSend }} />
       )}
 
-      <div className="flex flex-col w-[80%] lg:w-2/3 h-full bg-base-200   ">
+      <div className="flex flex-col w-[80%] lg:w-3/4 h-full bg-base-200   ">
         {/* Top NavBar */}
         <div>
           <Toaster />
         </div>
-        <div className="flex items-center justify-between  p-4 ">
+        <div className="flex items-center justify-between  px-4 py-2 ">
           <div className="flex items-center space-x-4">
             <div className="md:w-12 md:h-12 w-8 h-8  rounded-full  flex-shrink-0">
               <ContactProfile contactUserData={contactUserData} />
@@ -365,11 +365,11 @@ const ChatBox = () => {
 
         {/* Bottom Input Section */}
 
-        <div className="flex items-center p-4 bg-base-300 rounded-sm  border-base-300  border-t-2">
+        <div className="flex  items-center md:p-4 p-2 bg-base-300 rounded-sm  border-base-300  border-t-2">
           <div className="flex items-center lg:space-x-4">
             <button
               onClick={() => setShowEmojiPicker(!ShowEmojiPicker)}
-              className="p-2 text-primary "
+              className="md:p-2 text-primary "
             >
               {!ShowEmojiPicker ? (
                 <i className="far fa-smile lg:text-3xl text-xl"></i>
@@ -406,11 +406,11 @@ const ChatBox = () => {
             }}
             onKeyDown={handleKeyDownSendMessage}
             placeholder="Type a message"
-            className="flex-grow bg-base-200  input input-bordered text-base-content rounded-lg lg:px-4 lg:py-2 mx-4 focus:outline-none h-auto w-40"
+            className="flex-grow bg-base-200  input input-bordered text-base-content rounded-lg lg:px-4 lg:py-2 mx-2 focus:outline-none h-auto w-40"
           />
           <button
             onClick={sendMessage}
-            className="bg-primary lg:p-3 rounded-full text-base-300  text-sm  lg:text-lg p-1 "
+            className="bg-primary lg:p-3 rounded-full text-base-300  text-xs  lg:text-lg p-1 "
           >
             <i className="fas fa-paper-plane"></i>
           </button>

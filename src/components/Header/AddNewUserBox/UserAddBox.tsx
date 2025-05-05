@@ -108,7 +108,8 @@ const UserAddBox = () => {
         }
       }
     } catch (error: any) {
-      console.log(error.message);
+      toast.error("Unable To fetch All users Data")
+      console.log(error?.message);
     }
   };
   function sendFriendRequest(user: User) {
@@ -144,7 +145,10 @@ const UserAddBox = () => {
             setisopen(true);
           }}
         >
+          <div className="flex items-center gap-3">
           <i className="fa-solid fa-plus md:text-4xl text-xl"></i>
+          <p className="md:hidden">  Add New User</p>
+          </div>
         </DialogTrigger>
         <VisuallyHidden>
           <DialogTitle>Hidden Dialog Title</DialogTitle>

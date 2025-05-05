@@ -42,12 +42,12 @@ const Call = ({ receiverId }:{receiverId:string}) => {
   };
   useEffect(() => {
     myPeer.current = new Peer("", {
-      host: "wavechat-perjs-server.onrender.com",
-      secure: true,
-      port: 443,
-      // host: "localhost",
-      // secure: false,
-      // port:9000,
+      // host: "wavechat-perjs-server.onrender.com",
+      // secure: true,
+      // port: 443,
+      host: "localhost",
+      secure: false,
+      port:9000,
       path: "/myapp",
     });
     fetchUserFeed();
