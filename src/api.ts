@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { server } from "./constants/config";
 
 const Api = axios.create({
-  baseURL: "http://localhost:5000/api/v1",
-  //   baseURL: process.env.NEXT_PUBLIC_API_URL,
+    baseURL:`${server}/api/v1`,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
