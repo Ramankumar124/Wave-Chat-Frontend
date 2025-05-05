@@ -10,8 +10,8 @@ export default defineConfig({
       VitePWA({
           registerType: 'autoUpdate',
           manifest: {
-            name: 'Wave-Chat',
-            short_name: 'ReactVite',
+            name: 'Wave Chat',
+            short_name: 'Wave Chat',
             start_url: '/',
             display: 'standalone',
             background_color: '#ffffff',
